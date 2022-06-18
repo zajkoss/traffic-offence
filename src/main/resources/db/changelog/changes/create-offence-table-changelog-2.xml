@@ -25,7 +25,15 @@
             <column name="version" type="int">
                 <constraints nullable="true"/>
             </column>
+            <column name="person_pesel" type="varchar(11)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="person_pesel"
+                                 baseTableName="offence"
+                                 constraintName="fk_offence_person_pesel"
+                                 referencedColumnNames="pesel"
+                                 referencedTableName="person"/>
         <rollback>
             <dropTable tableName="offence"/>
         </rollback>

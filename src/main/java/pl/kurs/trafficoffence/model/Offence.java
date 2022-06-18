@@ -30,7 +30,7 @@ public class Offence implements Serializable {
     private String faultDescription;
 
     @ManyToOne
-    @JoinColumn(name = "person_id", nullable = false)
+    @JoinColumn(name = "person_pesel", nullable = false,referencedColumnName = "pesel")
     private Person person;
 
     @Version
