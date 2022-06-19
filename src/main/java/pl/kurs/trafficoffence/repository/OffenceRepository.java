@@ -10,5 +10,5 @@ import java.time.LocalDateTime;
 public interface OffenceRepository extends JpaRepository<Offence, Long> {
 
     @Query("SELECT SUM(o.points) FROM Offence o where o.person = ?1 and o.time >= ?2")
-    long sumPointsByPeselAndTime(Person person, LocalDateTime time);
+    Long sumPointsByPeselAndTime(Person person, LocalDateTime time);
 }

@@ -1,8 +1,11 @@
 package pl.kurs.trafficoffence.service;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.kurs.trafficoffence.event.OnInformPersonEvent;
 import pl.kurs.trafficoffence.exception.EmptyIdException;
 import pl.kurs.trafficoffence.exception.NoEmptyIdException;
 import pl.kurs.trafficoffence.exception.NoEntityException;
@@ -16,14 +19,17 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class OffenceService implements IOffenceService {
 
     private final OffenceRepository offenceRepository;
     private final PersonRepository personRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OffenceService(OffenceRepository offenceRepository, PersonRepository personRepository) {
+    public OffenceService(OffenceRepository offenceRepository, PersonRepository personRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.offenceRepository = offenceRepository;
         this.personRepository = personRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -32,13 +38,17 @@ public class OffenceService implements IOffenceService {
             throw new NoEntityException();
         if (offence.getId() != null)
             throw new NoEmptyIdException(offence.getId());
-        if ((offence.getPoints() + offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime())) > 24) {
+        Long sumPoints = Optional.ofNullable(offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime())).orElse(0L);
+
+        if (sumPoints + offence.getPoints() > 24) {
             Person person = offence.getPerson();
             Optional<LocalDate> dateOfBanDrivingLicense = Optional.ofNullable(person.getDataOfBanDrivingLicense());
-            if(dateOfBanDrivingLicense.isPresent()){
-                throw new PersonHaveBanDrivingLicenseException(person.getPesel(),person.getDataOfBanDrivingLicense());
-            }else {
-                //todo send email
+            if (dateOfBanDrivingLicense.isPresent()) {
+                throw new PersonHaveBanDrivingLicenseException(person.getPesel(), person.getDataOfBanDrivingLicense());
+            } else {
+                applicationEventPublisher.publishEvent(
+                        new OnInformPersonEvent(person, offence.getTime().toLocalDate())
+                );
                 person.setDataOfBanDrivingLicense(offence.getTime().toLocalDate());
                 personRepository.save(person);
             }
