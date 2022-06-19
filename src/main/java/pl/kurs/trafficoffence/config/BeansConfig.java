@@ -13,6 +13,7 @@ import pl.kurs.trafficoffence.repository.OffenceRepository;
 import pl.kurs.trafficoffence.repository.PersonRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -42,15 +43,17 @@ public class BeansConfig {
 //    @Profile("dev")
     public ApplicationRunner dataInitializer(OffenceRepository offenceRepository, PersonRepository personRepository) {
         return args -> {
-            Person person1 = new Person("Jan","Kowalski","lukz1184@gmail.com","17252379565",new HashSet<>());
-            Person person2 = new Person("Anna","Kowalska","lukz1184@gmail.com","93102298064",new HashSet<>());
-            Person person3 = new Person("Maria","Kowalska","lukz1184@gmail.com","10301257867",new HashSet<>());
-            Person person4 = new Person("Franciszek","Kowalski","lukz1184@gmail.com","22261007161",new HashSet<>());
+            Person person1 = new Person("Jan","Kowalski","lukz1184@gmail.com","17252379565",new HashSet<>(), LocalDate.of(2022, 6, 20));
+            Person person2 = new Person("Anna","Kowalska","lukz1184@gmail.com","93102298064",new HashSet<>(),null);
+            Person person3 = new Person("Maria","Kowalska","lukz1184@gmail.com","10301257867",new HashSet<>(),null);
+            Person person4 = new Person("Franciszek","Kowalski","lukz1184@gmail.com","22261007161",new HashSet<>(),null);
             personRepository.saveAll(Arrays.asList(person1,person2,person3,person4));
             Offence offence1 = new Offence(LocalDateTime.of(2022, 6, 20, 10, 0),10, new BigDecimal("100.00"),"Przekroczenie prędkości",person1);
+            Offence offence11 = new Offence(LocalDateTime.of(2022, 6, 20, 11, 0),10, new BigDecimal("100.00"),"Przekroczenie prędkości",person1);
+            Offence offence12 = new Offence(LocalDateTime.of(2022, 6, 20, 12, 0),5, new BigDecimal("100.00"),"Przekroczenie prędkości",person1);
             Offence offence2 = new Offence(LocalDateTime.of(2022, 6, 20, 10, 0),10, new BigDecimal("200.00"),"Przekroczenie prędkości",person2);
             Offence offence3 = new Offence(LocalDateTime.of(2022, 6, 20, 15, 0),10, new BigDecimal("300.00"),"Przekroczenie prędkości",person2);
-            offenceRepository.saveAll(Arrays.asList(offence1,offence2,offence3));
+            offenceRepository.saveAll(Arrays.asList(offence1,offence11,offence12,offence2,offence3));
 
 
 

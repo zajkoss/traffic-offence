@@ -6,9 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.kurs.trafficoffence.exception.EmptyIdException;
-import pl.kurs.trafficoffence.exception.NoEmptyIdException;
-import pl.kurs.trafficoffence.exception.NoEntityException;
+import pl.kurs.trafficoffence.exception.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class MainExceptionHandler {
 
-    @ExceptionHandler({NoEntityException.class, EmptyIdException.class, NoEmptyIdException.class})
+    @ExceptionHandler({NoEntityException.class, EmptyIdException.class, NoEmptyIdException.class, PersonHaveBanDrivingLicenseException.class, EmptyPeselNumberException.class})
     public ResponseEntity<ExceptionResponse> handleCustomExceptions(Exception e) {
         ExceptionResponse response = new ExceptionResponse(List.of(e.getMessage()), e.getClass().getSimpleName(), "BAD_REQUEST", LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

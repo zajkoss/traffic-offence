@@ -2,6 +2,7 @@ package pl.kurs.trafficoffence.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -31,18 +32,22 @@ public class Person implements Serializable {
     @OneToMany(mappedBy = "person")
     private Set<Offence> offences = new HashSet<>();
 
+    @Column
+    private LocalDate dataOfBanDrivingLicense;
+
     @Version
     private Integer version;
 
     public Person() {
     }
 
-    public Person(String name, String lastname, String email, String pesel, Set<Offence> offences) {
+    public Person(String name, String lastname, String email, String pesel, Set<Offence> offences, LocalDate dataOfBanDrivingLicense) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.pesel = pesel;
         this.offences = offences;
+        this.dataOfBanDrivingLicense = dataOfBanDrivingLicense;
     }
 
     public Long getId() {
@@ -97,17 +102,25 @@ public class Person implements Serializable {
         this.offences = offences;
     }
 
+    public LocalDate getDataOfBanDrivingLicense() {
+        return dataOfBanDrivingLicense;
+    }
+
+    public void setDataOfBanDrivingLicense(LocalDate dataOfBanDrivingLicense) {
+        this.dataOfBanDrivingLicense = dataOfBanDrivingLicense;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(lastname, person.lastname) && Objects.equals(email, person.email) && Objects.equals(offences, person.offences) && Objects.equals(version, person.version);
+        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(lastname, person.lastname) && Objects.equals(email, person.email) && Objects.equals(pesel, person.pesel) && Objects.equals(offences, person.offences) && Objects.equals(dataOfBanDrivingLicense, person.dataOfBanDrivingLicense) && Objects.equals(version, person.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastname, email, offences, version);
+        return Objects.hash(id, name, lastname, email, pesel, offences, dataOfBanDrivingLicense, version);
     }
 
     @Override
@@ -117,7 +130,10 @@ public class Person implements Serializable {
                 ", name='" + name + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
+                ", pesel='" + pesel + '\'' +
                 ", offences=" + offences +
+                ", dataOfBanDrivingLicense=" + dataOfBanDrivingLicense +
+                ", version=" + version +
                 '}';
     }
 }

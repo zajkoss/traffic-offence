@@ -22,6 +22,12 @@
             <column name="pesel" type="varchar(11)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="uq_person_pesel_number"/>
             </column>
+            <column name="ban_driving_license" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_of_ban_driving_license" type="date">
+                <constraints nullable="true"/>
+            </column>
             <column name="version" type="int">
                 <constraints nullable="true"/>
             </column>
