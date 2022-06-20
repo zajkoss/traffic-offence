@@ -70,9 +70,9 @@ class OffenceControllerIT {
         person1 = personRepository.save(person1);
         person2 = personRepository.save(person2);
         person3 = personRepository.save(person3);
-        offence1 = new Offence(LocalDateTime.of(2022, 6, 15, 10, 0), 5, new BigDecimal("1000.00"), "Prędkości", person3);
-        offence2 = new Offence(LocalDateTime.of(2022, 6, 16, 10, 0), 6, new BigDecimal("1000.00"), "Parkowanie", person3);
-        offence3 = new Offence(LocalDateTime.of(2022, 6, 17, 10, 0), 7, new BigDecimal("1000.00"), "Wyprzedzanie na podwójnej", person3);
+        offence1 = new Offence(LocalDateTime.of(2022, 6, 15, 10, 0), 10, new BigDecimal("1000.00"), "Prędkości", person3);
+        offence2 = new Offence(LocalDateTime.of(2022, 6, 16, 10, 0), 5, new BigDecimal("1000.00"), "Parkowanie", person3);
+        offence3 = new Offence(LocalDateTime.of(2022, 6, 17, 10, 0), 5, new BigDecimal("1000.00"), "Wyprzedzanie na podwójnej", person3);
         offence1 = offenceRepository.save(offence1);
         offence2 = offenceRepository.save(offence2);
         offence3 = offenceRepository.save(offence3);
@@ -132,11 +132,6 @@ class OffenceControllerIT {
 
     }
 
-    //todo
-    /*
-    - add
-    - walidacje
-     */
 
     @Test
     public void shouldAddNewOffence() throws Exception {
@@ -166,6 +161,35 @@ class OffenceControllerIT {
         OffenceDto offenceDtoResponse = objectMapper.readValue(responseJson, OffenceDto.class);
         assertEquals(offenceDto, offenceDtoResponse);
     }
+
+
+    @Test
+    public void shouldThrowPersonHaveBanDrivingLicenseExceptionWhenTryAddOffenceForPersonWithBan() throws Exception {
+        //given
+        Offence offence = new Offence(LocalDateTime.of(2022, 6, 18, 11, 0), 12, new BigDecimal("500.00"), "Parkowanie", person3);
+        String createOffenceCommandJson = objectMapper.writeValueAsString(modelMapper.map(offence, CreateOffenceCommand.class));
+
+        mockMvc.perform(post("/offence")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createOffenceCommandJson));
+
+
+        offence = new Offence(LocalDateTime.of(2022, 6, 18, 13, 0), 12, new BigDecimal("500.00"), "Parkowanie", person3);
+        createOffenceCommandJson = objectMapper.writeValueAsString(modelMapper.map(offence, CreateOffenceCommand.class));
+
+        //when
+        mockMvc.perform(post("/offence")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createOffenceCommandJson))
+                //then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Driving license ban, pesel: 10301257867, from: 2022-06-18")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("PersonHaveBanDrivingLicenseException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+    }
+
 
 
     @Test

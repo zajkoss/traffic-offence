@@ -38,7 +38,7 @@ public class OffenceService implements IOffenceService {
             throw new NoEntityException();
         if (offence.getId() != null)
             throw new NoEmptyIdException(offence.getId());
-        Long sumPoints = Optional.ofNullable(offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime())).orElse(0L);
+        Long sumPoints = Optional.ofNullable(offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime().minusYears(1L))).orElse(0L);
 
         if (sumPoints + offence.getPoints() > 24) {
             Person person = offence.getPerson();
