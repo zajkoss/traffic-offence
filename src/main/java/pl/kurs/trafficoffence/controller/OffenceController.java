@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/offence")
+@RequestMapping(path = "/offence", produces = "application/json;charset=UTF-8")
 @Validated
 public class OffenceController {
 

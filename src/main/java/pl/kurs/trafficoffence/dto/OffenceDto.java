@@ -1,5 +1,7 @@
 package pl.kurs.trafficoffence.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,6 +11,7 @@ public class OffenceDto {
 
     private Long id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
     private Integer points;
@@ -78,5 +81,17 @@ public class OffenceDto {
     @Override
     public int hashCode() {
         return Objects.hash(id, time, points, penalty, faultDescription, personPesel);
+    }
+
+    @Override
+    public String toString() {
+        return "OffenceDto{" +
+                "id=" + id +
+                ", time=" + time +
+                ", points=" + points +
+                ", penalty=" + penalty +
+                ", faultDescription='" + faultDescription + '\'' +
+                ", personPesel='" + personPesel + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package pl.kurs.trafficoffence.command;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.pl.PESEL;
 import pl.kurs.trafficoffence.validator.PersonExist;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 public class CreateOffenceCommand {
 
     @PastOrPresent
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
     @PositiveOrZero

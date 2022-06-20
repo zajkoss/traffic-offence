@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface PersonExist {
 
-    String message() default "Brak podanej osoby w systemie";
+    String message() default "Person for given PESEL not exists in system";
 
     Class<?>[] groups() default {};
 

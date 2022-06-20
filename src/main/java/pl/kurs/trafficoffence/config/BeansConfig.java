@@ -46,7 +46,6 @@ public class BeansConfig {
     }
 
     @Bean
-//    @Profile("dev")
     public ApplicationRunner dataInitializer(OffenceRepository offenceRepository, PersonRepository personRepository) {
         return args -> {
             Person person1 = new Person("Jan","Kowalski","lukz1184@gmail.com","17252379565",new HashSet<>(), LocalDate.of(2022, 6, 20));
