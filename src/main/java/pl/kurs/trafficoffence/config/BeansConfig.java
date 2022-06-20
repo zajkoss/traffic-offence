@@ -16,6 +16,9 @@ import pl.kurs.trafficoffence.model.Offence;
 import pl.kurs.trafficoffence.model.Person;
 import pl.kurs.trafficoffence.repository.OffenceRepository;
 import pl.kurs.trafficoffence.repository.PersonRepository;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -90,5 +93,14 @@ public class BeansConfig {
         eventMulticaster = new SimpleApplicationEventMulticaster();
         eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
         return eventMulticaster;
+    }
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(s -> !s.endsWith("/error"))
+                .build();
     }
 }
