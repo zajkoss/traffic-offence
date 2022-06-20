@@ -212,9 +212,9 @@ class OffenceControllerIT {
     }
 
     @Test
-    public void shouldThrowBadRequestCodeWhenTryAddOffenceWithHigherPointsThan24() throws Exception {
+    public void shouldThrowBadRequestCodeWhenTryAddOffenceWithHigherPointsThan15() throws Exception {
         //given
-        Offence offence = new Offence(LocalDateTime.of(2022, 6, 17, 10, 0), 25, new BigDecimal("500.00"), "Parkowanie", person2);
+        Offence offence = new Offence(LocalDateTime.of(2022, 6, 17, 10, 0), 16, new BigDecimal("500.00"), "Parkowanie", person2);
         String createOffenceCommandJson = objectMapper.writeValueAsString(modelMapper.map(offence, CreateOffenceCommand.class));
 
         //when
@@ -225,7 +225,7 @@ class OffenceControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: points; value: '25'; message: must be less than or equal to 24")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: points; value: '16'; message: must be less than or equal to 15")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }

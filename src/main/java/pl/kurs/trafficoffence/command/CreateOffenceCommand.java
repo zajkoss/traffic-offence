@@ -18,7 +18,7 @@ public class CreateOffenceCommand {
     private LocalDateTime time;
 
     @PositiveOrZero
-    @Max(24)
+    @Max(15)
     private Integer points;
 
     @PositiveOrZero
