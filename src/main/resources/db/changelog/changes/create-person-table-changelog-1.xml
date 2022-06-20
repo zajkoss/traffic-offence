@@ -20,7 +20,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="pesel" type="varchar(11)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uq_person_pesel_number"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_person_pesel_number"/>
             </column>
             <column name="ban_driving_license" type="boolean">
                 <constraints nullable="false"/>
