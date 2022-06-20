@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class PersonService implements IPersonService{
+public class PersonService implements IPersonService {
 
     private final PersonRepository personRepository;
 

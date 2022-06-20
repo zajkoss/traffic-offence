@@ -5,7 +5,7 @@ import pl.kurs.trafficoffence.repository.PersonRepository;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class PersonExistValidator implements ConstraintValidator<PersonExist,String> {
+public class PersonExistValidator implements ConstraintValidator<PersonExist, String> {
 
 
     private final PersonRepository personRepository;

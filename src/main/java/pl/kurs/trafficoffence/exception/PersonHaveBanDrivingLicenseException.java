@@ -12,7 +12,7 @@ public class PersonHaveBanDrivingLicenseException extends RuntimeException {
     private LocalDate date;
 
     public PersonHaveBanDrivingLicenseException(String pesel, LocalDate dateOfBan) {
-        super("Driving license ban, pesel: " + pesel + ", from: " + dateOfBan.toString() );
+        super("Driving license ban, pesel: " + pesel + ", from: " + dateOfBan.toString());
         this.pesel = pesel;
         this.date = date;
     }

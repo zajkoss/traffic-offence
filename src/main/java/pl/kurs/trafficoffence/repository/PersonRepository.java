@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     boolean existsByPesel(String peselNumber);
+
     Optional<Person> findByPesel(String peselNumber);
 
 }
