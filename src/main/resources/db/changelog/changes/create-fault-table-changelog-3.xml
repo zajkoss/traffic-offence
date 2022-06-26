@@ -10,11 +10,17 @@
             <column autoIncrement="true" name="id_fault" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="points" type="int">
                 <constraints nullable="true"/>
             </column>
             <column name="penalty" type="decimal(10,2)">
                 <constraints nullable="true"/>
+            </column>
+            <column name="deleted" type="boolean">
+                <constraints nullable="false"/>
             </column>
             <column name="version" type="int">
                 <constraints nullable="true"/>

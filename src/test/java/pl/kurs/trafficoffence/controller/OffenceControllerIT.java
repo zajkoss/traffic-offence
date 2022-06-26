@@ -1,43 +1,13 @@
 package pl.kurs.trafficoffence.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import pl.kurs.trafficoffence.TrafficOffenceApplication;
-import pl.kurs.trafficoffence.command.CreateOffenceCommand;
-import pl.kurs.trafficoffence.dto.OffenceDto;
-import pl.kurs.trafficoffence.model.Offence;
-import pl.kurs.trafficoffence.model.Person;
-import pl.kurs.trafficoffence.repository.OffenceRepository;
-import pl.kurs.trafficoffence.repository.PersonRepository;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = TrafficOffenceApplication.class)
 @AutoConfigureMockMvc
 class OffenceControllerIT {
-
+/*
     @Autowired
     private MockMvc mockMvc;
 
@@ -328,4 +298,6 @@ class OffenceControllerIT {
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }
+
+ */
 }

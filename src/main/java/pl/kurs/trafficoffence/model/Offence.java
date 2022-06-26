@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class Offence implements Serializable {
             name = "offence_fault",
             joinColumns = @JoinColumn(name = "offence_id"),
             inverseJoinColumns = @JoinColumn(name = "fault_id"))
-    private Set<Fault> faults;
+    private Set<Fault> faults  = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "person_pesel", nullable = false, referencedColumnName = "pesel")
