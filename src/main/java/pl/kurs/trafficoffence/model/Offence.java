@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "Offence")
@@ -26,8 +27,12 @@ public class Offence implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal penalty;
 
-    @Column(nullable = false)
-    private String faultDescription;
+    @ManyToMany
+    @JoinTable(
+            name = "offence_fault",
+            joinColumns = @JoinColumn(name = "offence_id"),
+            inverseJoinColumns = @JoinColumn(name = "fault_id"))
+    private Set<Fault> faults;
 
     @ManyToOne
     @JoinColumn(name = "person_pesel", nullable = false, referencedColumnName = "pesel")
@@ -39,11 +44,11 @@ public class Offence implements Serializable {
     public Offence() {
     }
 
-    public Offence(LocalDateTime date, Integer points, BigDecimal penalty, String faultDescription, Person person) {
-        this.time = date;
+    public Offence(LocalDateTime time, Integer points, BigDecimal penalty, Set<Fault> faults, Person person) {
+        this.time = time;
         this.points = points;
         this.penalty = penalty;
-        this.faultDescription = faultDescription;
+        this.faults = faults;
         this.person = person;
     }
 
@@ -79,12 +84,12 @@ public class Offence implements Serializable {
         this.penalty = penalty;
     }
 
-    public String getFaultDescription() {
-        return faultDescription;
+    public Set<Fault> getFaults() {
+        return faults;
     }
 
-    public void setFaultDescription(String faultDescription) {
-        this.faultDescription = faultDescription;
+    public void setFaults(Set<Fault> faults) {
+        this.faults = faults;
     }
 
     public Person getPerson() {
@@ -104,23 +109,23 @@ public class Offence implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Offence offence = (Offence) o;
-        return Objects.equals(id, offence.id) && Objects.equals(time, offence.time) && Objects.equals(points, offence.points) && Objects.equals(penalty, offence.penalty) && Objects.equals(faultDescription, offence.faultDescription) && Objects.equals(person, offence.person) && Objects.equals(version, offence.version);
+        return Objects.equals(id, offence.id) && Objects.equals(time, offence.time) && Objects.equals(points, offence.points) && Objects.equals(penalty, offence.penalty) && Objects.equals(faults, offence.faults) && Objects.equals(person, offence.person) && Objects.equals(version, offence.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, time, points, penalty, faultDescription, person, version);
+        return Objects.hash(id, time, points, penalty, faults, person, version);
     }
 
     @Override
     public String toString() {
         return "Offence{" +
                 "id=" + id +
-                ", date=" + time +
+                ", time=" + time +
                 ", points=" + points +
                 ", penalty=" + penalty +
-                ", faultDescription='" + faultDescription + '\'' +
                 ", person=" + person +
+                ", version=" + version +
                 '}';
     }
 }
