@@ -182,7 +182,6 @@ class FaultControllerIT {
     @Test
     public void shouldReturnAllAvailableFaults() throws Exception {
         String responseJson = mockMvc.perform(get("/fault/search")
-//                        .param("from", "2022-05-10 10:00:00"))
                 ).andExpect(status().isOk())
                 .andReturn()
                 .getResponse()

@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "person", produces = "application/json;charset=UTF-8")
+@RequestMapping(path = "/person", produces = "application/json;charset=UTF-8")
 @Validated
 public class PersonController {
     private final IPersonService personService;

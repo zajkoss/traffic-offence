@@ -1,6 +1,9 @@
 package pl.kurs.trafficoffence.model;
 
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,14 +31,15 @@ public class Offence implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal penalty;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "offence_fault",
             joinColumns = @JoinColumn(name = "offence_id"),
             inverseJoinColumns = @JoinColumn(name = "fault_id"))
     private Set<Fault> faults  = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_pesel", nullable = false, referencedColumnName = "pesel")
     private Person person;
 
