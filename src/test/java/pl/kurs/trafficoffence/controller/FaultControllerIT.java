@@ -55,6 +55,7 @@ class FaultControllerIT {
 
     @BeforeEach
     void setUp() {
+        faultRepository.deleteAll();
         fault1 = new Fault("Wyprzedzanie na pasach", 15, new BigDecimal("5000.00"), new HashSet<>(), false);
         fault2 = new Fault("Przekroczenie prędkości o 50km/h", 10, new BigDecimal("4000.00"), new HashSet<>(), false);
         fault3 = new Fault("Przekroczenie prędkości o 40km/h", 8, new BigDecimal("3000.00"), new HashSet<>(), false);

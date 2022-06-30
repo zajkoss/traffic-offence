@@ -8,8 +8,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.kurs.trafficoffence.TrafficOffenceApplication;
+import pl.kurs.trafficoffence.command.CreatePersonCommand;
+import pl.kurs.trafficoffence.dto.PersonDto;
 import pl.kurs.trafficoffence.dto.PersonDtoWithOffencesSummary;
 import pl.kurs.trafficoffence.model.Offence;
 import pl.kurs.trafficoffence.model.Person;
@@ -24,6 +27,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = TrafficOffenceApplication.class)
@@ -138,5 +142,28 @@ class PersonControllerIT {
         });
         assertEquals(2, personsResponse.size());
 
+    }
+
+    @Test
+    public void shouldAddNewPerson() throws Exception {
+        //given
+        Person person = new Person("Jan","Mickiewicz","lukz1184@gmail.com","43070291006",new HashSet<>(), null);
+        String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
+
+        //when
+        String postRespondJson = mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createPersonCommandJson))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        PersonDto personDtoResponse = objectMapper.readValue(postRespondJson, PersonDto.class);
+        long generatedId = personDtoResponse.getId();
+
+        personRepository.findById(generatedId);
+        PersonDto personDtoSaved = modelMapper.map(personRepository.findById(generatedId).get(), PersonDto.class);
+        assertEquals(personDtoResponse, personDtoSaved);
     }
 }
