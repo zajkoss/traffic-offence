@@ -16,9 +16,11 @@ import pl.kurs.trafficoffence.dto.FaultDto;
 import pl.kurs.trafficoffence.dto.OffenceDto;
 import pl.kurs.trafficoffence.model.Fault;
 import pl.kurs.trafficoffence.model.Offence;
+import pl.kurs.trafficoffence.model.Parameterization;
 import pl.kurs.trafficoffence.model.Person;
 import pl.kurs.trafficoffence.repository.FaultRepository;
 import pl.kurs.trafficoffence.repository.OffenceRepository;
+import pl.kurs.trafficoffence.repository.ParameterizationRepository;
 import pl.kurs.trafficoffence.repository.PersonRepository;
 
 import java.math.BigDecimal;
@@ -59,6 +61,9 @@ class OffenceControllerIT {
     @Autowired
     private FaultRepository faultRepository;
 
+    @Autowired
+    private ParameterizationRepository parameterizationRepository;
+
     private Person person1;
     private Person person2;
     private Person person3;
@@ -75,6 +80,9 @@ class OffenceControllerIT {
     void setUp() {
         offenceRepository.deleteAll();
         personRepository.deleteAll();
+        parameterizationRepository.deleteAll();
+        parameterizationRepository.save(new Parameterization("limitOfPenalty","8000.00"));
+        parameterizationRepository.save(new Parameterization("limitOfPoints","20"));
         person1 = new Person("Jan", "Kowalski", "lukz1184@gmail.com", "17252379565", new HashSet<>(), LocalDate.of(2022, 6, 20));
         person2 = new Person("Anna", "Kowalska", "lukz1184@gmail.com", "93102298064", new HashSet<>(), null);
         person3 = new Person("Maria", "Kowalska", "lukz1184@gmail.com", "10301257867", new HashSet<>(), null);
@@ -160,6 +168,7 @@ class OffenceControllerIT {
         offenceDto.setFaults(List.of(modelMapper.map(fault1, FaultDto.class),modelMapper.map(fault2, FaultDto.class)));
         String createOffenceCommandJson = objectMapper.writeValueAsString(createOffenceCommand);
 
+
         //when
         String postRespondJson = mockMvc.perform(post("/offence")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -179,6 +188,12 @@ class OffenceControllerIT {
                 .getResponse()
                 .getContentAsString();
         OffenceDto offenceDtoResponse = objectMapper.readValue(responseJson, OffenceDto.class);
+        List<FaultDto> faultsFromOffenceDto = offenceDto.getFaults();
+        List<FaultDto> faultsFromResponse = offenceDtoResponse.getFaults();
+        assertTrue(faultsFromResponse.containsAll(faultsFromResponse));
+        assertTrue(faultsFromResponse.containsAll(faultsFromOffenceDto));
+        offenceDtoResponse.setFaults(null);
+        offenceDto.setFaults(null);
         assertEquals(offenceDto, offenceDtoResponse);
     }
 

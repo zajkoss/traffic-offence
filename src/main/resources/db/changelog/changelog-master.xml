@@ -11,4 +11,5 @@
     <include file="/db/changelog/changes/create-offence-fault-table-changelog-4.xml"/>
     <include file="/db/changelog/changes/alter-offence-table-changelog-5.xml"/>
     <include file="/db/changelog/changes/add-fk-fault-table-changelog-6.xml"/>
+    <include file="/db/changelog/changes/create-parameterization-table-changelog-7.xml"/>
 </databaseChangeLog>
