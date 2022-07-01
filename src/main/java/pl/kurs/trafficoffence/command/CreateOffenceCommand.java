@@ -2,14 +2,13 @@ package pl.kurs.trafficoffence.command;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.pl.PESEL;
+import pl.kurs.trafficoffence.validator.FaultsExist;
 import pl.kurs.trafficoffence.validator.PersonExist;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.PositiveOrZero;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CreateOffenceCommand {
 
@@ -17,20 +16,16 @@ public class CreateOffenceCommand {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
-    @PositiveOrZero
-    @Max(15)
-    private Integer points;
-
-    @PositiveOrZero
-    @Max(5000)
-    private BigDecimal penalty;
-
-    @NotBlank
-    private String faultDescription;
+    @NotEmpty(message = "List of faults cannot be empty")
+    @FaultsExist
+    private List<Long> faults;
 
     @PESEL
     @PersonExist
     private String personPesel;
+
+    public CreateOffenceCommand() {
+    }
 
     public LocalDateTime getTime() {
         return time;
@@ -38,30 +33,6 @@ public class CreateOffenceCommand {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
-    }
-
-    public Integer getPoints() {
-        return points;
-    }
-
-    public void setPoints(Integer points) {
-        this.points = points;
-    }
-
-    public BigDecimal getPenalty() {
-        return penalty;
-    }
-
-    public void setPenalty(BigDecimal penalty) {
-        this.penalty = penalty;
-    }
-
-    public String getFaultDescription() {
-        return faultDescription;
-    }
-
-    public void setFaultDescription(String faultDescription) {
-        this.faultDescription = faultDescription;
     }
 
     public String getPersonPesel() {
@@ -72,13 +43,19 @@ public class CreateOffenceCommand {
         this.personPesel = personPesel;
     }
 
+    public List<Long> getFaults() {
+        return faults;
+    }
+
+    public void setFaults(List<Long> faults) {
+        this.faults = faults;
+    }
+
     @Override
     public String toString() {
         return "CreateOffenceCommand{" +
                 "time=" + time +
-                ", points=" + points +
-                ", penalty=" + penalty +
-                ", faultDescription='" + faultDescription + '\'' +
+                ", faults=" + faults +
                 ", personPesel='" + personPesel + '\'' +
                 '}';
     }
