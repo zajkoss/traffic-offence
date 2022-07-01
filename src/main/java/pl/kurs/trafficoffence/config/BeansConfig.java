@@ -23,7 +23,13 @@ public class BeansConfig {
 
     @Bean
     public ModelMapper createModelMapper() {
-        return new ModelMapper();
+        ModelMapper mapper = new ModelMapper();
+
+//        TypeMap<Offence, CreateOffenceCommand> propertyMapper = mapper.createTypeMap(Offence.class, CreateOffenceCommand.class);
+//        Converter<List<Fault>, List<Long>> collectionToSize = c -> c.getSource().stream().map(f -> f.getId()).collect(Collectors.toList());
+//        propertyMapper.addMappings(m -> m.using(collectionToSize).map(Offence::getFaults, CreateOffenceCommand::setFaults));
+
+        return mapper;
     }
 
     private static final String dateFormat = "yyyy-MM-dd";

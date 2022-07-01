@@ -3,6 +3,8 @@ package pl.kurs.trafficoffence.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import pl.kurs.trafficoffence.model.Fault;
 
 import java.math.BigDecimal;
@@ -23,6 +25,10 @@ public interface FaultRepository extends JpaRepository<Fault, Long> {
             String name,
             boolean deleted
     );
+
+    @Query("SELECT f FROM Fault f WHERE f.id IN (:faults)")
+    List<Fault> findAllByListOfId(@Param("faults") List<Long> faultsId);
+
 
 
 }

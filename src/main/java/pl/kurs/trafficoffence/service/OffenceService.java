@@ -15,6 +15,7 @@ import pl.kurs.trafficoffence.model.Person;
 import pl.kurs.trafficoffence.repository.OffenceRepository;
 import pl.kurs.trafficoffence.repository.PersonRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -38,6 +39,16 @@ public class OffenceService implements IOffenceService {
             throw new NoEntityException();
         if (offence.getId() != null)
             throw new NoEmptyIdException(offence.getId());
+
+        BigDecimal limitOfPenalty = new BigDecimal("8000.00");
+        int limitOFPoints = 20;
+
+        int sumOfPoints = offence.getFaults().stream().map(fault -> fault.getPoints()).reduce((p1, p2) -> p1 + p2).get();
+        BigDecimal sumOfPenalty = offence.getFaults().stream().map(fault -> fault.getPenalty()).reduce((p1, p2) -> p1.add(p2)).get();
+
+        offence.setPoints(Integer.min(limitOFPoints,sumOfPoints));
+        offence.setPenalty(limitOfPenalty.min(sumOfPenalty));
+
         Long sumPoints = Optional.ofNullable(offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime().minusYears(1L))).orElse(0L);
 
         if (sumPoints + offence.getPoints() > 24) {
@@ -66,4 +77,5 @@ public class OffenceService implements IOffenceService {
     public Page<Offence> getAll(Pageable pageable) {
         return offenceRepository.findAll(pageable);
     }
+
 }

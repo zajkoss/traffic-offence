@@ -22,4 +22,6 @@ public interface IFaultService {
 
     List<Fault> searchFaults(String name, Integer minPoints, Integer maxPoints, BigDecimal minPenalty, BigDecimal maxPenalty);
 
+    List<Fault> getAllByListOfId(List<Long> id);
+
 }

@@ -57,6 +57,7 @@ public class Offence implements Serializable {
         this.person = person;
     }
 
+
     public Long getId() {
         return id;
     }
@@ -119,7 +120,7 @@ public class Offence implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, time, points, penalty, faults, person, version);
+        return Objects.hash(id, time, points, penalty, person, version);
     }
 
     @Override

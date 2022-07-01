@@ -72,4 +72,9 @@ public class FaultService implements IFaultService{
     public List<Fault> searchFaults(String name, Integer minPoints, Integer maxPoints, BigDecimal minPenalty, BigDecimal maxPenalty) {
         return faultRepository.findAllByPointsBetweenAndPenaltyBetweenAndNameContainingIgnoreCaseAndDeleted(minPoints,maxPoints,minPenalty,maxPenalty,name,false);
     }
+
+    @Override
+    public List<Fault> getAllByListOfId(List<Long> ids) {
+        return faultRepository.findAllByListOfId(ids);
+    }
 }
