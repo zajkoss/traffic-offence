@@ -74,8 +74,6 @@ class OffenceControllerIT {
     private Fault fault2;
     private Fault fault3;
 
-    //public Person(String name, String lastname, String email, String pesel, Set<Offence> offences, LocalDate dataOfBanDrivingLicense)
-    //public Offence(LocalDateTime time, Integer points, BigDecimal penalty, Set<Fault> faults, Person person) {
     @BeforeEach
     void setUp() {
         offenceRepository.deleteAll();
