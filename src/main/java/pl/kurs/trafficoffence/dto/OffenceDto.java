@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class OffenceDto {
@@ -18,7 +19,7 @@ public class OffenceDto {
 
     private BigDecimal penalty;
 
-    private String faultDescription;
+    private List<FaultDto> faults;
 
     private String personPesel;
 
@@ -54,12 +55,12 @@ public class OffenceDto {
         this.penalty = penalty;
     }
 
-    public String getFaultDescription() {
-        return faultDescription;
+    public List<FaultDto> getFaults() {
+        return faults;
     }
 
-    public void setFaultDescription(String faultDescription) {
-        this.faultDescription = faultDescription;
+    public void setFaults(List<FaultDto> faults) {
+        this.faults = faults;
     }
 
     public String getPersonPesel() {
@@ -75,12 +76,12 @@ public class OffenceDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OffenceDto that = (OffenceDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(time, that.time) && Objects.equals(points, that.points) && Objects.equals(penalty, that.penalty) && Objects.equals(faultDescription, that.faultDescription) && Objects.equals(personPesel, that.personPesel);
+        return Objects.equals(id, that.id) && Objects.equals(time, that.time) && Objects.equals(points, that.points) && Objects.equals(penalty, that.penalty) && Objects.equals(faults, that.faults) && Objects.equals(personPesel, that.personPesel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, time, points, penalty, faultDescription, personPesel);
+        return Objects.hash(id, time, points, penalty, faults, personPesel);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class OffenceDto {
                 ", time=" + time +
                 ", points=" + points +
                 ", penalty=" + penalty +
-                ", faultDescription='" + faultDescription + '\'' +
+                ", faults=" + faults +
                 ", personPesel='" + personPesel + '\'' +
                 '}';
     }

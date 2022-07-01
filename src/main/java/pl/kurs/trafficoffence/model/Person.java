@@ -1,5 +1,8 @@
 package pl.kurs.trafficoffence.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -30,6 +33,7 @@ public class Person implements Serializable {
     private String pesel;
 
     @OneToMany(mappedBy = "person")
+    @Fetch(FetchMode.JOIN)
     private Set<Offence> offences = new HashSet<>();
 
     @Column
@@ -120,7 +124,7 @@ public class Person implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastname, email, pesel, offences, dataOfBanDrivingLicense, version);
+        return Objects.hash(id, name, lastname, email, pesel, dataOfBanDrivingLicense, version);
     }
 
     @Override
@@ -131,7 +135,7 @@ public class Person implements Serializable {
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", pesel='" + pesel + '\'' +
-                ", offences=" + offences +
+//                ", offences=" + offences +
                 ", dataOfBanDrivingLicense=" + dataOfBanDrivingLicense +
                 ", version=" + version +
                 '}';
