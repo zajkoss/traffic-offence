@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class FaultService implements IFaultService{
+public class FaultService implements IFaultService {
 
     private final FaultRepository faultRepository;
 
@@ -37,12 +37,12 @@ public class FaultService implements IFaultService{
 
     @Override
     public Optional<Fault> getNotDeletedById(Long id) {
-        return faultRepository.findByIdAndDeleted(Optional.ofNullable(id).orElseThrow(() -> new EmptyIdException(id)),false);
+        return faultRepository.findByIdAndDeleted(Optional.ofNullable(id).orElseThrow(() -> new EmptyIdException(id)), false);
     }
 
     @Override
     public Page<Fault> getAllNotDeleted(Pageable pageable) {
-        return faultRepository.findAllByDeleted(pageable,false);
+        return faultRepository.findAllByDeleted(pageable, false);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class FaultService implements IFaultService{
     public Fault update(Fault fault) {
         if (fault == null)
             throw new NoEntityException();
-        if(fault.getId() == null)
+        if (fault.getId() == null)
             throw new EmptyIdException(fault.getId());
 
         Fault loadedFault = faultRepository.findById(fault.getId()).orElseThrow(() -> new EntityNotFoundException(Long.toString(fault.getId())));
@@ -70,7 +70,7 @@ public class FaultService implements IFaultService{
 
     @Override
     public List<Fault> searchFaults(String name, Integer minPoints, Integer maxPoints, BigDecimal minPenalty, BigDecimal maxPenalty) {
-        return faultRepository.findAllByPointsBetweenAndPenaltyBetweenAndNameContainingIgnoreCaseAndDeleted(minPoints,maxPoints,minPenalty,maxPenalty,name,false);
+        return faultRepository.findAllByPointsBetweenAndPenaltyBetweenAndNameContainingIgnoreCaseAndDeleted(minPoints, maxPoints, minPenalty, maxPenalty, name, false);
     }
 
     @Override

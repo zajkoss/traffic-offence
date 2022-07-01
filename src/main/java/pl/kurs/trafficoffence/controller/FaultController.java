@@ -58,7 +58,7 @@ public class FaultController {
     @PostMapping
     public ResponseEntity<FaultDto> addFault(@RequestBody @Valid CreateFaultCommand createFaultCommand) {
         Fault newFault = mapper.map(createFaultCommand, Fault.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(faultService.add(newFault),FaultDto.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(faultService.add(newFault), FaultDto.class));
     }
 
     @PutMapping("/delete/{id}")
@@ -70,7 +70,7 @@ public class FaultController {
     @PutMapping()
     public ResponseEntity<FaultDto> updateFault(@RequestBody UpdateFaultCommand updateFaultCommand) {
         Fault updateFault = mapper.map(updateFaultCommand, Fault.class);
-        return ResponseEntity.ok(mapper.map(faultService.update(updateFault),FaultDto.class));
+        return ResponseEntity.ok(mapper.map(faultService.update(updateFault), FaultDto.class));
     }
 
     @GetMapping("/search")

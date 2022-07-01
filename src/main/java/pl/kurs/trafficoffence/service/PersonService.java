@@ -44,7 +44,7 @@ public class PersonService implements IPersonService {
         return persons.stream().map(person -> summaryPersonOffences(person)).collect(Collectors.toList());
     }
 
-    private PersonDtoWithOffencesSummary summaryPersonOffences(Person person){
+    private PersonDtoWithOffencesSummary summaryPersonOffences(Person person) {
         Optional<Integer> pointsFor2Years = person.getOffences().stream()
                 .filter(offence -> offence.getTime().isAfter(LocalDateTime.now().minusYears(2)))
                 .map(offence -> offence.getPoints())

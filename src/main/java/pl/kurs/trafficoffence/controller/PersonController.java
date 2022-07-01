@@ -30,7 +30,7 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonDto> addPerson(@RequestBody @Valid CreatePersonCommand createPersonCommand) {
         Person newPerson = mapper.map(createPersonCommand, Person.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(personService.add(newPerson),PersonDto.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(personService.add(newPerson), PersonDto.class));
     }
 
     @GetMapping("/search")

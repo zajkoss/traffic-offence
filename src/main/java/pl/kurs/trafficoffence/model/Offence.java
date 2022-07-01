@@ -37,7 +37,7 @@ public class Offence implements Serializable {
             name = "offence_fault",
             joinColumns = @JoinColumn(name = "offence_id"),
             inverseJoinColumns = @JoinColumn(name = "fault_id"))
-    private Set<Fault> faults  = new HashSet<>();
+    private Set<Fault> faults = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_pesel", nullable = false, referencedColumnName = "pesel")

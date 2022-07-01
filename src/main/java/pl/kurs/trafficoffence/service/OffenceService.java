@@ -58,7 +58,7 @@ public class OffenceService implements IOffenceService {
         int sumOfPoints = offence.getFaults().stream().map(fault -> fault.getPoints()).reduce((p1, p2) -> p1 + p2).get();
         BigDecimal sumOfPenalty = offence.getFaults().stream().map(fault -> fault.getPenalty()).reduce((p1, p2) -> p1.add(p2)).get();
 
-        offence.setPoints(Integer.min(limitOFPoints,sumOfPoints));
+        offence.setPoints(Integer.min(limitOFPoints, sumOfPoints));
         offence.setPenalty(limitOfPenalty.min(sumOfPenalty));
 
         Long sumPoints = Optional.ofNullable(offenceRepository.sumPointsByPeselAndTime(offence.getPerson(), offence.getTime().minusYears(1L))).orElse(0L);

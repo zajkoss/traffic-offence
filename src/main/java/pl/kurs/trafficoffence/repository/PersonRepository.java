@@ -15,6 +15,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     Optional<Person> findByPesel(String peselNumber);
 
     @Query("SELECT DISTINCT p FROM Person p LEFT JOIN Offence o ON p.pesel = o.person.pesel WHERE p.name LIKE CONCAT('%',:name,'%') AND p.lastname LIKE CONCAT('%',:lastname,'%') AND p.pesel LIKE CONCAT('%',:pesel,'%') ")
-    List<Person> findAllByNameContainingIgnoreCaseAndLastnameContainingIgnoreCaseAndPesel(@Param("name") String name, @Param("lastname") String lastname,@Param("pesel")  String pesel);
+    List<Person> findAllByNameContainingIgnoreCaseAndLastnameContainingIgnoreCaseAndPesel(@Param("name") String name, @Param("lastname") String lastname, @Param("pesel") String pesel);
 
 }

@@ -30,5 +30,4 @@ public interface FaultRepository extends JpaRepository<Fault, Long> {
     List<Fault> findAllByListOfId(@Param("faults") List<Long> faultsId);
 
 
-
 }
