@@ -61,7 +61,7 @@ public class FaultController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(faultService.add(newFault), FaultDto.class));
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<StatusDto> softDelete(@PathVariable("id") long id) {
         faultService.softDelete(id);
         return ResponseEntity.ok().body(new StatusDto(Long.toString(id)));

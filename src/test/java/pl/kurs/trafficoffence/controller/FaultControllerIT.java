@@ -165,7 +165,7 @@ class FaultControllerIT {
         String updateFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, UpdateFaultCommand.class));
 
         //when
-        String postRespondJson = mockMvc.perform(put("/fault/delete/" + fault.getId()))
+        String postRespondJson = mockMvc.perform(delete("/fault/delete/" + fault.getId()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
