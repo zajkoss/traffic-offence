@@ -51,7 +51,6 @@ public class FaultService implements IFaultService {
                 .findById(Optional.ofNullable(id).orElseThrow(() -> new EmptyIdException(id)))
                 .orElseThrow(() -> new EntityNotFoundException(id.toString()));
         loadedFault.setDeleted(true);
-        faultRepository.save(loadedFault);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class FaultService implements IFaultService {
         loadedFault.setName(fault.getName());
         loadedFault.setPoints(fault.getPoints());
         loadedFault.setPenalty(fault.getPenalty());
-        return faultRepository.save(loadedFault);
+        return loadedFault;
     }
 
     @Override
