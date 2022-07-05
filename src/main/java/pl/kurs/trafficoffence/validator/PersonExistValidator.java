@@ -15,11 +15,6 @@ public class PersonExistValidator implements ConstraintValidator<PersonExist, St
     }
 
     @Override
-    public void initialize(PersonExist constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
-
-    @Override
     public boolean isValid(String pesel, ConstraintValidatorContext constraintValidatorContext) {
         return personRepository.existsByPesel(pesel);
     }
