@@ -245,4 +245,32 @@ class FaultControllerIT {
         );
     }
 
+
+    @Test
+    public void shouldTrowExceptionWhenTryAddFaultWithNotUniqueName() throws Exception {
+        //given
+        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), new HashSet<>(), false);
+        FaultDto faultDto = modelMapper.map(fault, FaultDto.class);
+        String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
+
+        mockMvc.perform(post("/fault")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createFaultCommandJson))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        mockMvc.perform(post("/fault")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createFaultCommandJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: name; value: 'Brak tablicy rejestracyjnej'; message: Not unique fault name")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+    }
+
+
 }
