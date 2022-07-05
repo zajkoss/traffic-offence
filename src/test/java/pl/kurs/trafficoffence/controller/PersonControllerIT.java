@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = TrafficOffenceApplication.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(printOnlyOnFailure = false)
 class PersonControllerIT {
 
     @Autowired
@@ -70,7 +70,6 @@ class PersonControllerIT {
         offenceRepository.save(offence1);
         offenceRepository.save(offence2);
         offenceRepository.save(offence3);
-        System.out.println(personRepository.findAll());
     }
 
 
