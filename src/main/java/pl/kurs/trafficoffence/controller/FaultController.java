@@ -68,7 +68,7 @@ public class FaultController {
     }
 
     @PutMapping()
-    public ResponseEntity<FaultDto> updateFault(@RequestBody UpdateFaultCommand updateFaultCommand) {
+    public ResponseEntity<FaultDto> updateFault(@RequestBody @Valid UpdateFaultCommand updateFaultCommand) {
         Fault updateFault = mapper.map(updateFaultCommand, Fault.class);
         return ResponseEntity.ok(mapper.map(faultService.update(updateFault), FaultDto.class));
     }

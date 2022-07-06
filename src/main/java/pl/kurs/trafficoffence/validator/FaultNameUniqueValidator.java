@@ -15,6 +15,6 @@ public class FaultNameUniqueValidator implements ConstraintValidator<FaultNameUn
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        return faultRepository.findByName(value).isEmpty();
+        return !faultRepository.existsByName(value);
     }
 }
