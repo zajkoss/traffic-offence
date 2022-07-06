@@ -24,10 +24,13 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = TrafficOffenceApplication.class)
@@ -146,7 +149,7 @@ class PersonControllerIT {
     @Test
     public void shouldAddNewPerson() throws Exception {
         //given
-        Person person = new Person("Jan","Mickiewicz","lukz1184@gmail.com","43070291006",new HashSet<>(), null);
+        Person person = new Person("Jan","Mickiewicz","lukz1181@gmail.com","43070291006",new HashSet<>(), null);
         String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
 
         //when
@@ -164,5 +167,23 @@ class PersonControllerIT {
         personRepository.findById(generatedId);
         PersonDto personDtoSaved = modelMapper.map(personRepository.findById(generatedId).get(), PersonDto.class);
         assertEquals(personDtoResponse, personDtoSaved);
+    }
+    @Test
+    public void shouldThrowExceptionWhenTryAddNewPersonWithNotUniqueEmail() throws Exception {
+        //given
+        Person person = new Person("Luke","Nowakiewicz","lukz1184@gmail.com","43070291006",new HashSet<>(), null);
+        String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
+
+        //when
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createPersonCommandJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmail.com'; message: Not unique email")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+
     }
 }
