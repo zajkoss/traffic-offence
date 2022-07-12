@@ -17,7 +17,7 @@ public interface FaultRepository extends JpaRepository<Fault, Long> {
 
     Optional<Fault> findByIdAndDeleted(Long in, boolean deleted);
 
-    boolean existsByName(String name);
+    boolean existsByNameAndAndDeleted(String name,boolean deleted);
 
     List<Fault> findAllByPointsBetweenAndPenaltyBetweenAndNameContainingIgnoreCaseAndDeleted(
             Integer minPoints,
