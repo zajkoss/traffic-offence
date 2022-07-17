@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class MainExceptionHandler {
 
-    @ExceptionHandler({NoEntityException.class, EmptyIdException.class, NoEmptyIdException.class, PersonHaveBanDrivingLicenseException.class, EmptyPeselNumberException.class,BadQueryException.class})
+    @ExceptionHandler({NoEntityException.class, EmptyIdException.class, NoEmptyIdException.class, PersonHaveBanDrivingLicenseException.class, EmptyPeselNumberException.class, BadQueryException.class})
     public ResponseEntity<ExceptionResponse> handleCustomExceptions(Exception e) {
         ExceptionResponse response = new ExceptionResponse(List.of(e.getMessage()), e.getClass().getSimpleName(), "BAD_REQUEST", LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

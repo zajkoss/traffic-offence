@@ -101,7 +101,7 @@ public class PersonService implements IPersonService {
                     .fetch();
 
             //select all persons without any offences
-            if (minPoints <= 0 && maxPoints > minPoints ) {
+            if (minPoints <= 0 && maxPoints > minPoints) {
                 persons.addAll(queryFactory.selectFrom(qperson)
                         .leftJoin(qperson.offences, qOffence)
                         .on(qOffence.person.pesel.eq(qperson.pesel))
@@ -134,7 +134,7 @@ public class PersonService implements IPersonService {
         return personWithOffences;
     }
 
-    public static boolean isNumeric(String str) {
+    private static boolean isNumeric(String str) {
         try {
             Integer.parseInt(str);
         } catch (final NumberFormatException e) {

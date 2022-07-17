@@ -5,7 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {FaultNameUniqueValidator.class,FaultNameUniqueValidatorForType.class})
+@Constraint(validatedBy = {FaultNameUniqueValidator.class, FaultNameUniqueValidatorForType.class})
 @Target(value = {ElementType.TYPE, ElementType.FIELD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface FaultNameUnique {

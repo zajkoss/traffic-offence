@@ -27,7 +27,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>, QuerydslP
     List<Person> findAllByNameContainingIgnoreCaseAndLastnameContainingIgnoreCaseAndPesel(@Param("name") String name, @Param("lastname") String lastname, @Param("pesel") String pesel);
 
     @Override
-    default  void customize(QuerydslBindings bindings, QPerson root){
+    default void customize(QuerydslBindings bindings, QPerson root) {
         bindings.bind(String.class)
                 .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
         bindings.excluding(root.email);

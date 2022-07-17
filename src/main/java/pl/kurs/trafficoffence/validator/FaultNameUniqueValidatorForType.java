@@ -17,6 +17,6 @@ public class FaultNameUniqueValidatorForType implements ConstraintValidator<Faul
 
     @Override
     public boolean isValid(UpdateFaultCommand updateFaultCommand, ConstraintValidatorContext constraintValidatorContext) {
-        return !faultRepository.existsByNameAndAndDeletedAndIdNot(updateFaultCommand.getName(),false, updateFaultCommand.getId());
+        return !faultRepository.existsByNameAndAndDeletedAndIdNot(updateFaultCommand.getName(), false, updateFaultCommand.getId());
     }
 }

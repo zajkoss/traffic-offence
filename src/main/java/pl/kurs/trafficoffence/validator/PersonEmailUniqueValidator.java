@@ -5,7 +5,7 @@ import pl.kurs.trafficoffence.repository.PersonRepository;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class PersonEmailUniqueValidator implements ConstraintValidator<PersonEmailUnique,String> {
+public class PersonEmailUniqueValidator implements ConstraintValidator<PersonEmailUnique, String> {
 
     private final PersonRepository personRepository;
 

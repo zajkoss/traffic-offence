@@ -84,7 +84,7 @@ public class PersonPredicate {
         return buildPesel.toString();
     }
 
-    public static boolean isNumeric(final String str) {
+    private static boolean isNumeric(final String str) {
         try {
             Integer.parseInt(str);
         } catch (final NumberFormatException e) {
