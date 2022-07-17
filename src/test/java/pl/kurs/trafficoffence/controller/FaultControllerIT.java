@@ -2,6 +2,7 @@ package pl.kurs.trafficoffence.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.kurs.trafficoffence.TrafficOffenceApplication;
 import pl.kurs.trafficoffence.command.CreateFaultCommand;
@@ -16,22 +18,25 @@ import pl.kurs.trafficoffence.command.UpdateFaultCommand;
 import pl.kurs.trafficoffence.dto.FaultDto;
 import pl.kurs.trafficoffence.model.Fault;
 import pl.kurs.trafficoffence.repository.FaultRepository;
+import pl.kurs.trafficoffence.service.FaultService;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = TrafficOffenceApplication.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(printOnlyOnFailure = false)
 class FaultControllerIT {
 
     @Autowired
@@ -45,6 +50,9 @@ class FaultControllerIT {
 
     @Autowired
     private FaultRepository faultRepository;
+
+    @Autowired
+    private FaultService faultService;
 
     private Fault fault1;
     private Fault fault2;
@@ -127,7 +135,7 @@ class FaultControllerIT {
     @Test
     public void shouldUpdateFault() throws Exception {
         //given
-        Fault fault = new Fault("Jazda bez włączonych świateł", 1, new BigDecimal("200.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Parkowanie", 1, new BigDecimal("200.00"), new HashSet<>(), false);
         fault = faultRepository.save(fault);
 
         fault.setPoints(2);
@@ -165,7 +173,7 @@ class FaultControllerIT {
         String updateFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, UpdateFaultCommand.class));
 
         //when
-        String postRespondJson = mockMvc.perform(put("/fault/delete/" + fault.getId()))
+        String postRespondJson = mockMvc.perform(delete("/fault/delete/" + fault.getId()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -244,5 +252,108 @@ class FaultControllerIT {
                 assertTrue(fault.getName().contains("prędkości"))
         );
     }
+
+
+    @Test
+    public void shouldTrowExceptionWhenTryAddFaultWithNotUniqueName() throws Exception {
+        //given
+        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), new HashSet<>(), false);
+        FaultDto faultDto = modelMapper.map(fault, FaultDto.class);
+        String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
+
+        mockMvc.perform(post("/fault")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createFaultCommandJson))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        mockMvc.perform(post("/fault")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createFaultCommandJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: name; value: 'Brak tablicy rejestracyjnej'; message: Not unique fault name")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+    }
+
+
+    @Test
+    public void shouldTrowExceptionWhenTryUpdateFaultWithNotUniqueName() throws Exception {
+        //given
+        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), new HashSet<>(), false);
+        String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
+        faultRepository.save(fault);
+
+
+        fault2.setName("Brak tablicy rejestracyjnej");
+        String updateFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault2, UpdateFaultCommand.class));
+        mockMvc.perform(put("/fault")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateFaultCommandJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: updateFaultCommand'; message: Not unique fault name")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+    }
+
+    @Test
+    public void shouldThrowOptimisticLockingFailureWhenTryDeleteFaultInTheSameTime() throws Exception {
+        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), new HashSet<>(), false));
+        assertEquals(0, fault.getVersion());
+
+        final ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.execute(() -> {
+            faultService.softDelete(fault.getId());
+        });
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.MINUTES);
+
+        fault.setPoints(12);
+        Exception exception = assertThrows(ObjectOptimisticLockingFailureException.class, () -> faultRepository.save(fault));
+        SoftAssertions sa = new SoftAssertions();
+        sa.assertThat(exception).isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
+        sa.assertAll();
+
+        mockMvc.perform(get("/fault/" + fault.getId()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldThrowOptimisticLockingFailureWhenTryEditFaultInTheSameTime() throws Exception {
+        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), new HashSet<>(), false));
+        assertEquals(0, fault.getVersion());
+        fault.setPoints(6);
+
+        final ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.execute(() -> {
+            faultService.update(fault);
+        });
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.MINUTES);
+
+        fault.setPoints(7);
+        Exception exception = assertThrows(ObjectOptimisticLockingFailureException.class, () -> faultRepository.save(fault));
+        SoftAssertions sa = new SoftAssertions();
+        sa.assertThat(exception).isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
+        sa.assertAll();
+
+        String responseJson = mockMvc.perform(get("/fault/" + fault.getId()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Fault faultResponse = objectMapper.readValue(responseJson,Fault.class);
+        fault.setPoints(6);
+        faultResponse.setVersion(0);
+        assertEquals(fault,faultResponse);
+    }
+
 
 }

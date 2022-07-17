@@ -14,4 +14,7 @@ public interface IPersonService {
 
     List<PersonDtoWithOffencesSummary> searchPerson(String name, String surname, String pesel);
 
+    List<PersonDtoWithOffencesSummary> searchPerson(String criteria);
+
+
 }

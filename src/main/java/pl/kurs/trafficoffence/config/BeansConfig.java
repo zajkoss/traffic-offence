@@ -3,6 +3,7 @@ package pl.kurs.trafficoffence.config;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import pl.kurs.trafficoffence.repository.OffenceRepository;
+import pl.kurs.trafficoffence.repository.PersonRepository;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -21,14 +24,15 @@ import java.util.Properties;
 @Configuration
 public class BeansConfig {
 
+    @Autowired
+    PersonRepository personRepository;
+
+    @Autowired
+    OffenceRepository offenceRepository;
+
     @Bean
     public ModelMapper createModelMapper() {
         ModelMapper mapper = new ModelMapper();
-
-//        TypeMap<Offence, CreateOffenceCommand> propertyMapper = mapper.createTypeMap(Offence.class, CreateOffenceCommand.class);
-//        Converter<List<Fault>, List<Long>> collectionToSize = c -> c.getSource().stream().map(f -> f.getId()).collect(Collectors.toList());
-//        propertyMapper.addMappings(m -> m.using(collectionToSize).map(Offence::getFaults, CreateOffenceCommand::setFaults));
-
         return mapper;
     }
 
@@ -80,4 +84,6 @@ public class BeansConfig {
                 .paths(s -> !s.endsWith("/error"))
                 .build();
     }
+
+
 }

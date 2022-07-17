@@ -15,11 +15,6 @@ public class FaultsExistValidator implements ConstraintValidator<FaultsExist, Li
     }
 
     @Override
-    public void initialize(FaultsExist constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
-
-    @Override
     public boolean isValid(List<Long> longs, ConstraintValidatorContext constraintValidatorContext) {
         return faultRepository.findAllByListOfId(longs).size() == longs.size();
     }

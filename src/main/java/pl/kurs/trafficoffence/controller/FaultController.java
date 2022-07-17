@@ -61,14 +61,14 @@ public class FaultController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(faultService.add(newFault), FaultDto.class));
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<StatusDto> softDelete(@PathVariable("id") long id) {
         faultService.softDelete(id);
         return ResponseEntity.ok().body(new StatusDto(Long.toString(id)));
     }
 
     @PutMapping()
-    public ResponseEntity<FaultDto> updateFault(@RequestBody UpdateFaultCommand updateFaultCommand) {
+    public ResponseEntity<FaultDto> updateFault(@RequestBody @Valid UpdateFaultCommand updateFaultCommand) {
         Fault updateFault = mapper.map(updateFaultCommand, Fault.class);
         return ResponseEntity.ok(mapper.map(faultService.update(updateFault), FaultDto.class));
     }

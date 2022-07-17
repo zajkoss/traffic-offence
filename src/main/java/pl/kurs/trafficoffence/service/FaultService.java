@@ -12,6 +12,7 @@ import pl.kurs.trafficoffence.repository.FaultRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +52,7 @@ public class FaultService implements IFaultService {
                 .findById(Optional.ofNullable(id).orElseThrow(() -> new EmptyIdException(id)))
                 .orElseThrow(() -> new EntityNotFoundException(id.toString()));
         loadedFault.setDeleted(true);
-        faultRepository.save(loadedFault);
+        loadedFault.setEndDate(LocalDate.now());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class FaultService implements IFaultService {
         loadedFault.setName(fault.getName());
         loadedFault.setPoints(fault.getPoints());
         loadedFault.setPenalty(fault.getPenalty());
-        return faultRepository.save(loadedFault);
+        return loadedFault;
     }
 
     @Override

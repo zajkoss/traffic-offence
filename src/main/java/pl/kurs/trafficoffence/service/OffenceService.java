@@ -19,7 +19,6 @@ import pl.kurs.trafficoffence.repository.PersonRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,7 +47,6 @@ public class OffenceService implements IOffenceService {
         if (offence.getId() != null)
             throw new NoEmptyIdException(offence.getId());
 
-        List<Parameterization> all = parameterizationRepository.findAll();
         Optional<Parameterization> loadedParamForPenalty = parameterizationRepository.findByKeyParam(LIMIT_OF_PENALTY);
         Optional<Parameterization> loadedParamForPoints = parameterizationRepository.findByKeyParam(LIMIT_OF_POINTS);
 

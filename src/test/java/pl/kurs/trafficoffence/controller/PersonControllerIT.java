@@ -24,14 +24,17 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = TrafficOffenceApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest(classes = TrafficOffenceApplication.class,properties  = {"spring.h2.console.enabled=true"},webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureMockMvc(printOnlyOnFailure = false)
 class PersonControllerIT {
 
     @Autowired
@@ -60,7 +63,7 @@ class PersonControllerIT {
     void setUp(){
         offenceRepository.deleteAll();
         personRepository.deleteAll();
-        person1 = new Person("Jan","Kowalski","lukz1184@gmail.com","17252379565",new HashSet<>(), null);
+        person1 = new Person("Jan","Kowalski","lukz1184@gmail.com","17052379565",new HashSet<>(), null);
         person2 = new Person("Anna", "Kowalska", "lukz1184@gmail.com", "93102298064", new HashSet<>(), null);
         personRepository.save(person1);
         personRepository.save(person2);
@@ -70,7 +73,6 @@ class PersonControllerIT {
         offenceRepository.save(offence1);
         offenceRepository.save(offence2);
         offenceRepository.save(offence3);
-        System.out.println(personRepository.findAll());
     }
 
 
@@ -91,7 +93,7 @@ class PersonControllerIT {
     @Test
     public void shouldReturnSummaryForPersonByPesel() throws Exception{
         String responseJson = mockMvc.perform(get("/person/search")
-                        .param("pesel", "17252379565")
+                        .param("pesel", "17052379565")
                 ).andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -101,7 +103,7 @@ class PersonControllerIT {
         });
         assertEquals(1, personsResponse.size());
         PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
-        assertTrue(personResponse.getPesel().equals("17252379565"));
+        assertTrue(personResponse.getPesel().equals("17052379565"));
         assertTrue(personResponse.getPoints() == 10);
         assertTrue(personResponse.getTotalOffences() == 3);
         assertTrue(personResponse.getLastname().equals("Kowalski"));
@@ -122,7 +124,7 @@ class PersonControllerIT {
         });
         assertEquals(1, personsResponse.size());
         PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
-        assertTrue(personResponse.getPesel().equals("17252379565"));
+        assertTrue(personResponse.getPesel().equals("17052379565"));
         assertTrue(personResponse.getPoints() == 10);
         assertTrue(personResponse.getTotalOffences() == 3);
         assertTrue(personResponse.getLastname().equals("Kowalski"));
@@ -147,7 +149,7 @@ class PersonControllerIT {
     @Test
     public void shouldAddNewPerson() throws Exception {
         //given
-        Person person = new Person("Jan","Mickiewicz","lukz1184@gmail.com","43070291006",new HashSet<>(), null);
+        Person person = new Person("Jan","Mickiewicz","lukz1181@gmail.com","43070291006",new HashSet<>(), null);
         String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
 
         //when
@@ -166,4 +168,159 @@ class PersonControllerIT {
         PersonDto personDtoSaved = modelMapper.map(personRepository.findById(generatedId).get(), PersonDto.class);
         assertEquals(personDtoResponse, personDtoSaved);
     }
+    @Test
+    public void shouldThrowExceptionWhenTryAddNewPersonWithNotUniqueEmail() throws Exception {
+        //given
+        Person person = new Person("Luke","Nowakiewicz","lukz1184@gmail.com","43070291006",new HashSet<>(), null);
+        String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
+
+        //when
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createPersonCommandJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmail.com'; message: Not unique email")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+
+    }
+
+
+    @Test
+    public void shouldReturnSummaryForPersonByHigherThan10() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=points>10")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(1, personsResponse.size());
+        PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
+        assertTrue(personResponse.getPesel().equals("17052379565"));
+        assertTrue(personResponse.getPoints() == 10);
+        assertTrue(personResponse.getTotalOffences() == 3);
+        assertTrue(personResponse.getLastname().equals("Kowalski"));
+        assertTrue(personResponse.getName().equals("Jan"));
+    }
+
+    @Test
+    public void shouldReturnSummaryForPersonByLessPointsThan10() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=points<10")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(1, personsResponse.size());
+        PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
+        assertTrue(personResponse.getPesel().equals("93102298064"));
+        assertTrue(personResponse.getPoints() == 0);
+        assertTrue(personResponse.getTotalOffences() == 0);
+        assertTrue(personResponse.getLastname().equals("Kowalska"));
+        assertTrue(personResponse.getName().equals("Anna"));
+    }
+
+
+
+    @Test
+    public void shouldReturnSummaryForPersonByPointsBetween5And10() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=points<10,points>5")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(0, personsResponse.size());
+    }
+
+    @Test
+    public void shouldReturnSummaryForPersonByLastname() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=lastname:Kowals")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(2, personsResponse.size());
+    }
+
+    @Test
+    public void shouldReturnSummaryForPersonBornBefore1920() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=birthday<1920-01-01")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(1, personsResponse.size());
+        PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
+        assertTrue(personResponse.getPesel().equals("17052379565"));
+        assertTrue(personResponse.getPoints() == 10);
+        assertTrue(personResponse.getTotalOffences() == 3);
+        assertTrue(personResponse.getLastname().equals("Kowalski"));
+        assertTrue(personResponse.getName().equals("Jan"));
+    }
+
+
+    @Test
+    public void shouldReturnSummaryForPersonByBornAfter1920() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=birthday>1919-12-31")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(1, personsResponse.size());
+        PersonDtoWithOffencesSummary personResponse = personsResponse.get(0);
+        assertTrue(personResponse.getPesel().equals("93102298064"));
+        assertTrue(personResponse.getPoints() == 0);
+        assertTrue(personResponse.getTotalOffences() == 0);
+        assertTrue(personResponse.getLastname().equals("Kowalska"));
+        assertTrue(personResponse.getName().equals("Anna"));
+    }
+
+
+
+    @Test
+    public void shouldReturnSummaryForPersonByBornBetween1920And1990() throws Exception{
+        String responseJson = mockMvc.perform(get("/person/find?search=birthday>1919-12-31,birthday<1990-01-01")
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //then
+        List<PersonDtoWithOffencesSummary> personsResponse = objectMapper.readValue(responseJson, new TypeReference<List<PersonDtoWithOffencesSummary>>() {
+        });
+        assertEquals(0, personsResponse.size());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSearchWithInvalidField() throws Exception {
+        //when
+        mockMvc.perform(get("/person/find?search=nam:Jan")
+                ).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("could not resolve property: nam of: pl.kurs.trafficoffence.model.Person")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("BadQueryException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+
+    }
+
+
+
 }
