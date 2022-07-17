@@ -297,7 +297,7 @@ class FaultControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: name; value: 'Brak tablicy rejestracyjnej'; message: Not unique fault name")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: updateFaultCommand'; message: Not unique fault name")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }
