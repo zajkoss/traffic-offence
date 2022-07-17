@@ -1,6 +1,7 @@
 package pl.kurs.trafficoffence.command;
 
 import org.hibernate.validator.constraints.pl.PESEL;
+import pl.kurs.trafficoffence.validator.PersonEmailUnique;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ public class CreatePersonCommand {
 
     @NotBlank
     @Email
+    @PersonEmailUnique
     private String email;
 
     @PESEL

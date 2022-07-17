@@ -43,4 +43,10 @@ public class PersonController {
         return ResponseEntity.ok(loadedPersonWithOffenceSummary);
     }
 
+    @GetMapping("/find")
+    public ResponseEntity<List<PersonDtoWithOffencesSummary>> searchPerson(@RequestParam(value = "search") String criteria) {
+        return ResponseEntity.ok(personService.searchPerson(criteria));
+    }
+
+
 }

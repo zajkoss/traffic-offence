@@ -3,6 +3,7 @@ package pl.kurs.trafficoffence.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -32,10 +33,23 @@ public class Fault implements Serializable {
     @Column
     private boolean deleted = false;
 
+    @Column
+    private LocalDate endDate;
+
     @Version
     private Integer version;
 
     public Fault() {
+    }
+
+    public Fault(Long id, String name, Integer points, BigDecimal penalty, Set<Offence> offences, boolean deleted, LocalDate endDate) {
+        this.id = id;
+        this.name = name;
+        this.points = points;
+        this.penalty = penalty;
+        this.offences = offences;
+        this.deleted = deleted;
+        this.endDate = endDate;
     }
 
     public Fault(String name, Integer points, BigDecimal penalty, Set<Offence> offences, boolean deleted) {
@@ -102,17 +116,25 @@ public class Fault implements Serializable {
         this.version = version;
     }
 
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Fault fault = (Fault) o;
-        return deleted == fault.deleted && Objects.equals(id, fault.id) && Objects.equals(name, fault.name) && Objects.equals(points, fault.points) && Objects.equals(penalty, fault.penalty) && Objects.equals(offences, fault.offences) && Objects.equals(version, fault.version);
+        return deleted == fault.deleted && Objects.equals(id, fault.id) && Objects.equals(name, fault.name) && Objects.equals(points, fault.points) && Objects.equals(penalty, fault.penalty) && Objects.equals(endDate, fault.endDate) && Objects.equals(version, fault.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, points, penalty, offences, deleted, version);
+        return Objects.hash(id, name, points, penalty, deleted, endDate, version);
     }
 
     @Override
@@ -123,6 +145,7 @@ public class Fault implements Serializable {
                 ", points=" + points +
                 ", penalty=" + penalty +
                 ", deleted=" + deleted +
+                ", endDate=" + endDate +
                 ", version=" + version +
                 '}';
     }

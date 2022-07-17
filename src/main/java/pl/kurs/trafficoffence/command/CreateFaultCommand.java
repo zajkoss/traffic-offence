@@ -1,5 +1,7 @@
 package pl.kurs.trafficoffence.command;
 
+import pl.kurs.trafficoffence.validator.FaultNameUnique;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
 public class CreateFaultCommand {
 
     @NotBlank
+    @FaultNameUnique
     private String name;
 
     @PositiveOrZero
