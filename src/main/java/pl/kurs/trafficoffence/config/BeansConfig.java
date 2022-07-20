@@ -24,12 +24,6 @@ import java.util.Properties;
 @Configuration
 public class BeansConfig {
 
-    @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
-    OffenceRepository offenceRepository;
-
     @Bean
     public ModelMapper createModelMapper() {
         ModelMapper mapper = new ModelMapper();
