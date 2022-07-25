@@ -18,7 +18,7 @@ public class Fault implements Serializable {
     @Column(name = "id_fault")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
