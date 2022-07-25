@@ -11,7 +11,7 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)" >
-                <constraints nullable="false" unique="true" uniqueConstraintName="uq_fault_name"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_fault_name"/>
             </column>
             <column name="points" type="int">
                 <constraints nullable="true"/>

@@ -17,10 +17,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(255)" >
-                <constraints nullable="false" unique="true" uniqueConstraintName="uq_person_email"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_person_email"/>
             </column>
             <column name="pesel" type="varchar(11)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uq_person_pesel_number"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_person_pesel_number"/>
             </column>
             <column name="data_of_ban_driving_license" type="date">
                 <constraints nullable="true"/>

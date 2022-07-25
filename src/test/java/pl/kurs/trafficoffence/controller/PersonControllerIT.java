@@ -162,7 +162,7 @@ class PersonControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmaail.com'; message: Not unique email")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmaail.com'; message: Not unique value")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
 

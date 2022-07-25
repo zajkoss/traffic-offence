@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface FaultNameUnique {
 
-    String message() default "Not unique fault name";
+    String message() default "Not unique value";
 
     Class<?>[] groups() default {};
 
