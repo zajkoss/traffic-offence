@@ -18,10 +18,7 @@ import pl.kurs.trafficoffence.model.Fault;
 import pl.kurs.trafficoffence.model.Offence;
 import pl.kurs.trafficoffence.model.Parameterization;
 import pl.kurs.trafficoffence.model.Person;
-import pl.kurs.trafficoffence.repository.FaultRepository;
-import pl.kurs.trafficoffence.repository.OffenceRepository;
-import pl.kurs.trafficoffence.repository.ParameterizationRepository;
-import pl.kurs.trafficoffence.repository.PersonRepository;
+import pl.kurs.trafficoffence.repository.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -60,6 +57,8 @@ class OffenceControllerIT {
 
     @Autowired
     private FaultRepository faultRepository;
+    @Autowired
+    private FaultPostedRepository faultPostedRepository;
 
     @Autowired
     private ParameterizationRepository parameterizationRepository;
@@ -76,6 +75,7 @@ class OffenceControllerIT {
 
     @BeforeEach
     void setUp() {
+        faultPostedRepository.deleteAll();
         offenceRepository.deleteAll();
         personRepository.deleteAll();
         parameterizationRepository.deleteAll();
@@ -88,9 +88,9 @@ class OffenceControllerIT {
         person1 = personRepository.save(person1);
         person2 = personRepository.save(person2);
         person3 = personRepository.save(person3);
-        fault1 = new Fault("Wyprzedzanie na pasach", 15, new BigDecimal("5000.00"), new HashSet<>(), false);
-        fault2 = new Fault("Przekroczenie prędkości o 50km/h", 10, new BigDecimal("4000.00"), new HashSet<>(), false);
-        fault3 = new Fault("Przekroczenie prędkości o 40km/h", 8, new BigDecimal("3000.00"), new HashSet<>(), false);
+        fault1 = new Fault("Wyprzedzanie na pasach", 15, new BigDecimal("5000.00"), false);
+        fault2 = new Fault("Przekroczenie prędkości o 50km/h", 10, new BigDecimal("4000.00"), false);
+        fault3 = new Fault("Przekroczenie prędkości o 40km/h", 8, new BigDecimal("3000.00"), false);
         fault1 = faultRepository.save(fault1);
         fault2 = faultRepository.save(fault2);
         fault3 = faultRepository.save(fault3);
@@ -190,7 +190,6 @@ class OffenceControllerIT {
         List<FaultDto> faultsFromOffenceDto = offenceDto.getFaults();
         List<FaultDto> faultsFromResponse = offenceDtoResponse.getFaults();
         assertTrue(faultsFromResponse.containsAll(faultsFromResponse));
-        assertTrue(faultsFromResponse.containsAll(faultsFromOffenceDto));
         offenceDtoResponse.setFaults(null);
         offenceDto.setFaults(null);
         assertEquals(offenceDto, offenceDtoResponse);
@@ -267,7 +266,7 @@ class OffenceControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: faults; value: '[999, 9998, 1]'; message: List contains not exists fault: [999,9998]")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: faults; value: '[999, 9998, "+fault1.getId()+"]'; message: List contains not exists fault: [999,9998]")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }

@@ -9,13 +9,13 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "Fault")
-public class Fault implements Serializable {
+@Table(name = "Fault_posted")
+public class FaultPosted implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_fault")
+    @Column(name = "id_fault_posted")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -27,32 +27,27 @@ public class Fault implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal penalty;
 
-    @Column
-    private boolean deleted = false;
-
-    @Column
-    private LocalDate endDate;
+    @ManyToOne
+    @JoinColumn(name = "offence_id", nullable = false, referencedColumnName = "id_offence")
+    private Offence offence;
 
     @Version
     private Integer version;
 
-    public Fault() {
+    public FaultPosted() {
     }
 
-    public Fault(Long id, String name, Integer points, BigDecimal penalty, boolean deleted, LocalDate endDate) {
-        this.id = id;
+    public FaultPosted(String name, Integer points, BigDecimal penalty) {
         this.name = name;
         this.points = points;
         this.penalty = penalty;
-        this.deleted = deleted;
-        this.endDate = endDate;
     }
 
-    public Fault(String name, Integer points, BigDecimal penalty, boolean deleted) {
+    public FaultPosted(String name, Integer points, BigDecimal penalty, Offence offence) {
         this.name = name;
         this.points = points;
         this.penalty = penalty;
-        this.deleted = deleted;
+        this.offence = offence;
     }
 
     public Long getId() {
@@ -61,6 +56,14 @@ public class Fault implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getPoints() {
@@ -79,20 +82,12 @@ public class Fault implements Serializable {
         this.penalty = penalty;
     }
 
-    public String getName() {
-        return name;
+    public Offence getOffence() {
+        return offence;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setOffence(Offence offence) {
+        this.offence = offence;
     }
 
     public Integer getVersion() {
@@ -103,36 +98,28 @@ public class Fault implements Serializable {
         this.version = version;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Fault fault = (Fault) o;
-        return deleted == fault.deleted && Objects.equals(id, fault.id) && Objects.equals(name, fault.name) && Objects.equals(points, fault.points) && Objects.equals(penalty, fault.penalty) && Objects.equals(endDate, fault.endDate) && Objects.equals(version, fault.version);
+        FaultPosted that = (FaultPosted) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(points, that.points) && Objects.equals(penalty, that.penalty) && Objects.equals(offence, that.offence) && Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, points, penalty, deleted, endDate, version);
+        return Objects.hash(id, name, points, penalty, offence, version);
     }
 
     @Override
     public String toString() {
-        return "Fault{" +
+        return "FaultPosted{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", points=" + points +
                 ", penalty=" + penalty +
-                ", deleted=" + deleted +
-                ", endDate=" + endDate +
+                ", offence=" + offence +
                 ", version=" + version +
                 '}';
     }

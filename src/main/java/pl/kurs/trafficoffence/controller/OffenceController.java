@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.trafficoffence.command.CreateOffenceCommand;
 import pl.kurs.trafficoffence.dto.OffenceDto;
+import pl.kurs.trafficoffence.model.Fault;
 import pl.kurs.trafficoffence.model.Offence;
 import pl.kurs.trafficoffence.model.Person;
 import pl.kurs.trafficoffence.service.IFaultService;
@@ -28,14 +29,10 @@ import java.util.stream.Collectors;
 public class OffenceController {
 
     private final IOffenceService offenceService;
-    private final IPersonService personService;
-    private final IFaultService faultService;
     private final ModelMapper mapper;
 
-    public OffenceController(IOffenceService offenceService, IPersonService personService, IFaultService faultService, ModelMapper mapper) {
+    public OffenceController(IOffenceService offenceService, ModelMapper mapper) {
         this.offenceService = offenceService;
-        this.personService = personService;
-        this.faultService = faultService;
         this.mapper = mapper;
     }
 
@@ -64,11 +61,7 @@ public class OffenceController {
 
     @PostMapping
     public ResponseEntity<OffenceDto> addOffence(@RequestBody @Valid CreateOffenceCommand createOffenceCommand) {
-        Offence newOffence = mapper.map(createOffenceCommand, Offence.class);
-        Person loadedPerson = personService.getByPesel(createOffenceCommand.getPersonPesel()).get();
-        newOffence.setPerson(loadedPerson);
-        newOffence.setFaults(Set.copyOf(faultService.getAllByListOfId(createOffenceCommand.getFaults())));
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(offenceService.add(newOffence), OffenceDto.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(offenceService.add(createOffenceCommand), OffenceDto.class));
     }
 
 }

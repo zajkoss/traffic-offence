@@ -63,8 +63,8 @@ class PersonControllerIT {
     void setUp() {
         offenceRepository.deleteAll();
         personRepository.deleteAll();
-        person1 = new Person("Jan", "Kowalski", "lukz1184@gmail.com", "17052379565", new HashSet<>(), null);
-        person2 = new Person("Anna", "Kowalska", "lukz1184@gmail.com", "93102298064", new HashSet<>(), null);
+        person1 = new Person("Jan", "Kowalski", "lukz1184@gmaail.com", "17052379565", new HashSet<>(), null);
+        person2 = new Person("Anna", "Kowalska", "lukz1184@gmaill.com", "93102298064", new HashSet<>(), null);
         personRepository.save(person1);
         personRepository.save(person2);
         offence1 = new Offence(LocalDateTime.of(2022, 6, 20, 10, 0), 5, new BigDecimal("3000.0"), new HashSet<>(), person1);
@@ -152,7 +152,7 @@ class PersonControllerIT {
     @Test
     public void shouldThrowExceptionWhenTryAddNewPersonWithNotUniqueEmail() throws Exception {
         //given
-        Person person = new Person("Luke", "Nowakiewicz", "lukz1184@gmail.com", "43070291006", new HashSet<>(), null);
+        Person person = new Person("Luke", "Nowakiewicz", "lukz1184@gmaail.com", "43070291006", new HashSet<>(), null);
         String createPersonCommandJson = objectMapper.writeValueAsString(modelMapper.map(person, CreatePersonCommand.class));
 
         //when
@@ -162,7 +162,7 @@ class PersonControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmail.com'; message: Not unique email")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: email; value: 'lukz1184@gmaail.com'; message: Not unique email")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
 
