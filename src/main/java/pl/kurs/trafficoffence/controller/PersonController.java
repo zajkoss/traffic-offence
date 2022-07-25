@@ -10,10 +10,12 @@ import pl.kurs.trafficoffence.command.QueryPersonCommand;
 import pl.kurs.trafficoffence.dto.PersonDto;
 import pl.kurs.trafficoffence.dto.PersonDtoWithOffencesSummary;
 import pl.kurs.trafficoffence.model.Person;
+import pl.kurs.trafficoffence.predicate.SearchPersonQuery;
 import pl.kurs.trafficoffence.service.IPersonService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/person", produces = "application/json;charset=UTF-8")
@@ -35,18 +37,17 @@ public class PersonController {
 
     @GetMapping("/search")
     public ResponseEntity<List<PersonDtoWithOffencesSummary>> searchPerson(@ModelAttribute @Valid QueryPersonCommand queryPersonCommand) {
-        List<PersonDtoWithOffencesSummary> loadedPersonWithOffenceSummary = personService.searchPerson(
-                queryPersonCommand.getName() == null ? "" : queryPersonCommand.getName(),
-                queryPersonCommand.getLastname() == null ? "" : queryPersonCommand.getLastname(),
-                queryPersonCommand.getPesel() == null ? "" : queryPersonCommand.getPesel()
-        );
+        SearchPersonQuery searchPersonQuery = new SearchPersonQuery();
+        Optional.ofNullable(queryPersonCommand.getName()).ifPresent(searchPersonQuery::setName);
+        Optional.ofNullable(queryPersonCommand.getLastname()).ifPresent(searchPersonQuery::setLastname);
+        Optional.ofNullable(queryPersonCommand.getBirthdayFrom()).ifPresent(searchPersonQuery::setBirthdayFrom);
+        Optional.ofNullable(queryPersonCommand.getBirthdayTo()).ifPresent(searchPersonQuery::setBirthdayTo);
+        Optional.ofNullable(queryPersonCommand.getPointsFrom()).ifPresent(searchPersonQuery::setPointsFrom);
+        Optional.ofNullable(queryPersonCommand.getPointsTo()).ifPresent(searchPersonQuery::setPointsTo);
+        List<PersonDtoWithOffencesSummary> loadedPersonWithOffenceSummary = personService.searchPerson(searchPersonQuery);
         return ResponseEntity.ok(loadedPersonWithOffenceSummary);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<List<PersonDtoWithOffencesSummary>> searchPerson(@RequestParam(value = "search") String criteria) {
-        return ResponseEntity.ok(personService.searchPerson(criteria));
-    }
 
 
 }

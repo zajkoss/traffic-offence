@@ -1,12 +1,23 @@
 package pl.kurs.trafficoffence.command;
 
-public class QueryPersonCommand {
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.time.LocalDate;
+
+public class QueryPersonCommand {
     private String name;
 
     private String lastname;
 
-    private String pesel;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthdayFrom;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthdayTo;
+
+    private Integer pointsFrom;
+
+    private Integer pointsTo;
 
     public String getName() {
         return name;
@@ -24,11 +35,35 @@ public class QueryPersonCommand {
         this.lastname = lastname;
     }
 
-    public String getPesel() {
-        return pesel;
+    public LocalDate getBirthdayFrom() {
+        return birthdayFrom;
     }
 
-    public void setPesel(String pesel) {
-        this.pesel = pesel;
+    public void setBirthdayFrom(LocalDate birthdayFrom) {
+        this.birthdayFrom = birthdayFrom;
+    }
+
+    public LocalDate getBirthdayTo() {
+        return birthdayTo;
+    }
+
+    public void setBirthdayTo(LocalDate birthdayTo) {
+        this.birthdayTo = birthdayTo;
+    }
+
+    public Integer getPointsFrom() {
+        return pointsFrom;
+    }
+
+    public void setPointsFrom(Integer pointsFrom) {
+        this.pointsFrom = pointsFrom;
+    }
+
+    public Integer getPointsTo() {
+        return pointsTo;
+    }
+
+    public void setPointsTo(Integer pointsTo) {
+        this.pointsTo = pointsTo;
     }
 }
