@@ -7,6 +7,7 @@ import pl.kurs.trafficoffence.validator.PersonExist;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class CreateOffenceCommand {
     private LocalDateTime time;
 
     @NotEmpty(message = "List of faults cannot be empty")
-    @FaultsExist
+    @FaultsExist(message = "List contains not exists fault: [{list}]")
     private List<Long> faults;
 
     @PESEL
