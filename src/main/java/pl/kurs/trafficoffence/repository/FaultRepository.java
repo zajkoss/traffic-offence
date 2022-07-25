@@ -36,5 +36,4 @@ public interface FaultRepository extends JpaRepository<Fault, Long> {
     boolean existsById(Long id);
 
 
-
 }

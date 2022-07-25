@@ -26,7 +26,7 @@ public class FaultsExistValidator implements ConstraintValidator<FaultsExist, Li
             }
         }
         if (!notFoundFaults.isEmpty()) {
-            ((HibernateConstraintValidatorContext)constraintValidatorContext.unwrap(HibernateConstraintValidatorContext.class))
+            ((HibernateConstraintValidatorContext) constraintValidatorContext.unwrap(HibernateConstraintValidatorContext.class))
                     .addMessageParameter("list", notFoundFaults.stream().map(Object::toString).collect(Collectors.joining(",")));
             return false;
         }

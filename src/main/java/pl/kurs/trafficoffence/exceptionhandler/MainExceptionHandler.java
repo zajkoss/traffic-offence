@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.kurs.trafficoffence.exception.*;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -53,7 +54,7 @@ public class MainExceptionHandler {
         org.hibernate.exception.ConstraintViolationException cause = (org.hibernate.exception.ConstraintViolationException) e.getCause();
         String constraintName = cause.getConstraintName();
         Optional<String> fieldNotUnique = constraintCodeMap.entrySet().stream().filter(entry -> constraintName.contains(entry.getKey().toUpperCase())).findFirst().map(Map.Entry::getValue);
-        String message = "Property: " + fieldNotUnique.get()  + "; message: Not unique value";
+        String message = "Property: " + fieldNotUnique.get() + "; message: Not unique value";
         ExceptionResponse response = new ExceptionResponse(List.of(message), e.getClass().getSimpleName(), "BAD_REQUEST", LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

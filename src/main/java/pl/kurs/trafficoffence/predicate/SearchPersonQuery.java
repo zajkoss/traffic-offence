@@ -2,10 +2,7 @@ package pl.kurs.trafficoffence.predicate;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
-import liquibase.pro.packaged.B;
-import liquibase.pro.packaged.Q;
 import pl.kurs.trafficoffence.model.QOffence;
 import pl.kurs.trafficoffence.model.QPerson;
 
@@ -45,8 +42,8 @@ public class SearchPersonQuery {
         BooleanBuilder emptyPointsConditions = new BooleanBuilder();
         emptyPointsConditions.or(pointsConditions);
 
-        if((pointsFrom == null && pointsTo != null)
-        || (pointsFrom != null && pointsFrom <= 0))
+        if ((pointsFrom == null && pointsTo != null)
+                || (pointsFrom != null && pointsFrom <= 0))
             emptyPointsConditions.or(QPerson.person.offences.isEmpty());
 
         conditions.and(emptyPointsConditions);

@@ -7,7 +7,6 @@ import pl.kurs.trafficoffence.validator.PersonExist;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 

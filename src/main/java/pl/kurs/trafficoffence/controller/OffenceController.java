@@ -10,17 +10,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.trafficoffence.command.CreateOffenceCommand;
 import pl.kurs.trafficoffence.dto.OffenceDto;
-import pl.kurs.trafficoffence.model.Fault;
 import pl.kurs.trafficoffence.model.Offence;
-import pl.kurs.trafficoffence.model.Person;
-import pl.kurs.trafficoffence.service.IFaultService;
 import pl.kurs.trafficoffence.service.IOffenceService;
-import pl.kurs.trafficoffence.service.IPersonService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController

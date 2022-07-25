@@ -99,7 +99,7 @@ public class OffenceService implements IOffenceService {
         Offence savedOffence = offenceRepository.saveAndFlush(offence);
         Set<FaultPosted> faultsPosted = (
                 allFaultByListOfId.stream().map(fault ->
-                        new FaultPosted(fault.getName(), fault.getPoints(), fault.getPenalty(),savedOffence)
+                        new FaultPosted(fault.getName(), fault.getPoints(), fault.getPenalty(), savedOffence)
                 ).collect(Collectors.toSet())
         );
         faultPostedRepository.saveAllAndFlush(faultsPosted);

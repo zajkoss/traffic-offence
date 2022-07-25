@@ -16,5 +16,4 @@ public interface IPersonService {
     List<PersonDtoWithOffencesSummary> searchPerson(SearchPersonQuery searchPersonQuery);
 
 
-
 }
