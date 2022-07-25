@@ -79,11 +79,12 @@ class OffenceControllerIT {
         offenceRepository.deleteAll();
         personRepository.deleteAll();
         parameterizationRepository.deleteAll();
+        faultRepository.deleteAll();
         parameterizationRepository.save(new Parameterization("limitOfPenalty","8000.00"));
         parameterizationRepository.save(new Parameterization("limitOfPoints","20"));
         person1 = new Person("Jan", "Kowalski", "lukz1184@gmail.com", "17252379565", new HashSet<>(), LocalDate.of(2022, 6, 20));
-        person2 = new Person("Anna", "Kowalska", "lukz1184@gmail.com", "93102298064", new HashSet<>(), null);
-        person3 = new Person("Maria", "Kowalska", "lukz1184@gmail.com", "10301257867", new HashSet<>(), null);
+        person2 = new Person("Anna", "Kowalska", "lukz1184@gmaail.com", "93102298064", new HashSet<>(), null);
+        person3 = new Person("Maria", "Kowalska", "lukz1184@gmaaail.com", "10301257867", new HashSet<>(), null);
         person1 = personRepository.save(person1);
         person2 = personRepository.save(person2);
         person3 = personRepository.save(person3);
@@ -250,6 +251,27 @@ class OffenceControllerIT {
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }
 
+    @Test
+    public void shouldThrowBadRequestCodeWhenTryAddNotExistFault() throws Exception {
+        //given
+        Offence offence = new Offence(LocalDateTime.of(2021, 6, 17, 10, 0), 7, new BigDecimal("500.00"), new HashSet<>(), person2);
+        CreateOffenceCommand createOffenceCommand = modelMapper.map(offence, CreateOffenceCommand.class);
+        createOffenceCommand.setFaults(List.of(999L,9998L, fault1.getId()));
+        String createOffenceCommandJson = objectMapper.writeValueAsString(createOffenceCommand);
+
+        //when
+        mockMvc.perform(post("/offence")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createOffenceCommandJson))
+                //then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessages").isArray())
+                .andExpect(jsonPath("$.errorMessages", hasSize(1)))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: faults; value: '[999, 9998, 1]'; message: List contains not exists fault: [999,9998]")))
+                .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
+    }
+
 
     @Test
     public void shouldThrowBadRequestCodeWhenTryAddOffenceWithNoFaults() throws Exception {
@@ -270,6 +292,7 @@ class OffenceControllerIT {
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }
+
 
     @Test
     public void shouldThrowBadRequestCodeWhenTryAddOffenceWithWrongPESELNumberAndNotExistPerson() throws Exception {

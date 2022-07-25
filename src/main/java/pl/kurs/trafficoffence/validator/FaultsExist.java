@@ -12,6 +12,9 @@ public @interface FaultsExist {
 
     String message() default "List contains not exists fault";
 
+    String list() default "";
+
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

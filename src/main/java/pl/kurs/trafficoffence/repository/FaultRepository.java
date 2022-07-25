@@ -33,5 +33,8 @@ public interface FaultRepository extends JpaRepository<Fault, Long> {
     @Query("SELECT f FROM Fault f WHERE f.id IN (:faults)")
     List<Fault> findAllByListOfId(@Param("faults") List<Long> faultsId);
 
+    boolean existsById(Long id);
+
+
 
 }
