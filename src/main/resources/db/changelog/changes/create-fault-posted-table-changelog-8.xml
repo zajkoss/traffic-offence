@@ -5,32 +5,34 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    <changeSet author="lukasz" id="1">
-        <createTable tableName="person">
-            <column autoIncrement="true" name="id_person" type="bigint">
+    <changeSet author="lukasz" id="8">
+        <createTable tableName="fault_posted">
+            <column autoIncrement="true" name="id_fault_posted" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="name" type="varchar(255)">
+            <column name="name" type="varchar(255)" >
                 <constraints nullable="false"/>
             </column>
-            <column name="lastname" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="email" type="varchar(255)" >
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_person_email"/>
-            </column>
-            <column name="pesel" type="varchar(11)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_person_pesel_number"/>
-            </column>
-            <column name="data_of_ban_driving_license" type="date">
+            <column name="points" type="int">
                 <constraints nullable="true"/>
+            </column>
+            <column name="penalty" type="decimal(10,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offence_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
             <column name="version" type="int">
                 <constraints nullable="true"/>
             </column>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="offence_id"
+                                 baseTableName="fault_posted"
+                                 constraintName="fk_fault_posted_offence"
+                                 referencedColumnNames="id_offence"
+                                 referencedTableName="offence"/>
         <rollback>
-            <dropTable tableName="person"/>
+            <dropTable tableName="fault_posted"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

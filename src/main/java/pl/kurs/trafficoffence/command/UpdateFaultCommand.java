@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-@FaultNameUnique
+@FaultNameUnique(message = "Not unique fault name")
 public class UpdateFaultCommand {
 
     private Long id;

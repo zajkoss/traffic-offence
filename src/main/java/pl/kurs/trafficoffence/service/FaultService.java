@@ -33,6 +33,8 @@ public class FaultService implements IFaultService {
         if (fault.getId() != null)
             throw new NoEmptyIdException(fault.getId());
         fault.setDeleted(false);
+
+
         return faultRepository.save(fault);
     }
 
@@ -70,7 +72,8 @@ public class FaultService implements IFaultService {
     }
 
     @Override
-    public List<Fault> searchFaults(String name, Integer minPoints, Integer maxPoints, BigDecimal minPenalty, BigDecimal maxPenalty) {
+    public List<Fault> searchFaults(String name, Integer minPoints, Integer maxPoints, BigDecimal
+            minPenalty, BigDecimal maxPenalty) {
         return faultRepository.findAllByPointsBetweenAndPenaltyBetweenAndNameContainingIgnoreCaseAndDeleted(minPoints, maxPoints, minPenalty, maxPenalty, name, false);
     }
 

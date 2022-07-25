@@ -1,5 +1,6 @@
 package pl.kurs.trafficoffence.exceptionhandler;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,7 +12,10 @@ import pl.kurs.trafficoffence.exception.*;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -34,6 +38,24 @@ public class MainExceptionHandler {
                         .map(objectError -> "Property: " + objectError.getObjectName() + "'; message: " + objectError.getDefaultMessage()).collect(Collectors.toList())
         );
         ExceptionResponse response = new ExceptionResponse(messages, ex.getClass().getSimpleName(), "BAD_REQUEST", LocalDateTime.now());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private static Map<String, String> constraintCodeMap = new HashMap<String, String>() {
+        {
+            put("uk_person_pesel_number", "pesel");
+            put("uk_person_email", "email");
+            put("uk_fault_name", "name");
+        }
+    };
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        org.hibernate.exception.ConstraintViolationException cause = (org.hibernate.exception.ConstraintViolationException) e.getCause();
+        String constraintName = cause.getConstraintName();
+        Optional<String> fieldNotUnique = constraintCodeMap.entrySet().stream().filter(entry -> constraintName.contains(entry.getKey().toUpperCase())).findFirst().map(Map.Entry::getValue);
+        String message = "Property: " + fieldNotUnique.get() + "; message: Not unique value";
+        ExceptionResponse response = new ExceptionResponse(List.of(message), e.getClass().getSimpleName(), "BAD_REQUEST", LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

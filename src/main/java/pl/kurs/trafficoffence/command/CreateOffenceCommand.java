@@ -17,7 +17,7 @@ public class CreateOffenceCommand {
     private LocalDateTime time;
 
     @NotEmpty(message = "List of faults cannot be empty")
-    @FaultsExist
+    @FaultsExist(message = "List contains not exists fault: [{list}]")
     private List<Long> faults;
 
     @PESEL

@@ -1,9 +1,6 @@
 package pl.kurs.trafficoffence.model;
 
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -31,13 +28,8 @@ public class Offence implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal penalty;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-    @JoinTable(
-            name = "offence_fault",
-            joinColumns = @JoinColumn(name = "offence_id"),
-            inverseJoinColumns = @JoinColumn(name = "fault_id"))
-    private Set<Fault> faults = new HashSet<>();
+    @OneToMany(mappedBy = "offence")
+    private Set<FaultPosted> faults = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_pesel", nullable = false, referencedColumnName = "pesel")
@@ -49,7 +41,7 @@ public class Offence implements Serializable {
     public Offence() {
     }
 
-    public Offence(LocalDateTime time, Integer points, BigDecimal penalty, Set<Fault> faults, Person person) {
+    public Offence(LocalDateTime time, Integer points, BigDecimal penalty, Set<FaultPosted> faults, Person person) {
         this.time = time;
         this.points = points;
         this.penalty = penalty;
@@ -90,11 +82,11 @@ public class Offence implements Serializable {
         this.penalty = penalty;
     }
 
-    public Set<Fault> getFaults() {
+    public Set<FaultPosted> getFaults() {
         return faults;
     }
 
-    public void setFaults(Set<Fault> faults) {
+    public void setFaults(Set<FaultPosted> faults) {
         this.faults = faults;
     }
 

@@ -10,7 +10,9 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface PersonEmailUnique {
 
-    String message() default "Not unique email";
+    String message() default "Not unique value";
+
+    ;
 
     Class<?>[] groups() default {};
 

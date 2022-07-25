@@ -64,12 +64,12 @@ class FaultControllerIT {
     @BeforeEach
     void setUp() {
         faultRepository.deleteAll();
-        fault1 = new Fault("Wyprzedzanie na pasach", 15, new BigDecimal("5000.00"), new HashSet<>(), false);
-        fault2 = new Fault("Przekroczenie prędkości o 50km/h", 10, new BigDecimal("4000.00"), new HashSet<>(), false);
-        fault3 = new Fault("Przekroczenie prędkości o 40km/h", 8, new BigDecimal("3000.00"), new HashSet<>(), false);
-        fault4 = new Fault("Przekroczenie prędkości o 30km/h", 7, new BigDecimal("2000.00"), new HashSet<>(), false);
-        fault5 = new Fault("Przekroczenie prędkości o 20km/h", 6, new BigDecimal("1000.00"), new HashSet<>(), false);
-        fault6 = new Fault("Przekroczenie prędkości o 10km/h", 5, new BigDecimal("1000.00"), new HashSet<>(), false);
+        fault1 = new Fault("Wyprzedzanie na pasach", 15, new BigDecimal("5000.00"), false);
+        fault2 = new Fault("Przekroczenie prędkości o 50km/h", 10, new BigDecimal("4000.00"), false);
+        fault3 = new Fault("Przekroczenie prędkości o 40km/h", 8, new BigDecimal("3000.00"), false);
+        fault4 = new Fault("Przekroczenie prędkości o 30km/h", 7, new BigDecimal("2000.00"), false);
+        fault5 = new Fault("Przekroczenie prędkości o 20km/h", 6, new BigDecimal("1000.00"), false);
+        fault6 = new Fault("Przekroczenie prędkości o 10km/h", 5, new BigDecimal("1000.00"), false);
         faultRepository.save(fault1);
         faultRepository.save(fault2);
         faultRepository.save(fault3);
@@ -106,7 +106,7 @@ class FaultControllerIT {
     @Test
     public void shouldAddNewFault() throws Exception {
         //given
-        Fault fault = new Fault("Złe parkowanei", 1, new BigDecimal("500.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Złe parkowanei", 1, new BigDecimal("500.00"), false);
         FaultDto faultDto = modelMapper.map(fault, FaultDto.class);
         String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
 
@@ -135,7 +135,7 @@ class FaultControllerIT {
     @Test
     public void shouldUpdateFault() throws Exception {
         //given
-        Fault fault = new Fault("Parkowanie", 1, new BigDecimal("200.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Parkowanie", 1, new BigDecimal("200.00"), false);
         fault = faultRepository.save(fault);
 
         fault.setPoints(2);
@@ -166,14 +166,14 @@ class FaultControllerIT {
     @Test
     public void shouldSoftUpdate() throws Exception {
         //given
-        Fault fault = new Fault("Jazda bez włączonych świateł", 1, new BigDecimal("200.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Jazda bez włączonych świateł", 1, new BigDecimal("200.00"), false);
         fault = faultRepository.save(fault);
 
         FaultDto faultDto = modelMapper.map(fault, FaultDto.class);
         String updateFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, UpdateFaultCommand.class));
 
         //when
-        String postRespondJson = mockMvc.perform(delete("/fault/delete/" + fault.getId()))
+        String postRespondJson = mockMvc.perform(delete("/fault/" + fault.getId()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -257,7 +257,7 @@ class FaultControllerIT {
     @Test
     public void shouldTrowExceptionWhenTryAddFaultWithNotUniqueName() throws Exception {
         //given
-        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), false);
         FaultDto faultDto = modelMapper.map(fault, FaultDto.class);
         String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
 
@@ -275,7 +275,7 @@ class FaultControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessages").isArray())
                 .andExpect(jsonPath("$.errorMessages", hasSize(1)))
-                .andExpect(jsonPath("$.errorMessages", hasItem("Property: name; value: 'Brak tablicy rejestracyjnej'; message: Not unique fault name")))
+                .andExpect(jsonPath("$.errorMessages", hasItem("Property: name; value: 'Brak tablicy rejestracyjnej'; message: Not unique value")))
                 .andExpect(jsonPath("$.exceptionTypeName").value("MethodArgumentNotValidException"))
                 .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"));
     }
@@ -284,7 +284,7 @@ class FaultControllerIT {
     @Test
     public void shouldTrowExceptionWhenTryUpdateFaultWithNotUniqueName() throws Exception {
         //given
-        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), new HashSet<>(), false);
+        Fault fault = new Fault("Brak tablicy rejestracyjnej", 1, new BigDecimal("50.00"), false);
         String createFaultCommandJson = objectMapper.writeValueAsString(modelMapper.map(fault, CreateFaultCommand.class));
         faultRepository.save(fault);
 
@@ -304,7 +304,7 @@ class FaultControllerIT {
 
     @Test
     public void shouldThrowOptimisticLockingFailureWhenTryDeleteFaultInTheSameTime() throws Exception {
-        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), new HashSet<>(), false));
+        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), false));
         assertEquals(0, fault.getVersion());
 
         final ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -326,7 +326,7 @@ class FaultControllerIT {
 
     @Test
     public void shouldThrowOptimisticLockingFailureWhenTryEditFaultInTheSameTime() throws Exception {
-        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), new HashSet<>(), false));
+        Fault fault = faultRepository.save(new Fault("Brak zapiętych pasów", 5, new BigDecimal("500.00"), false));
         assertEquals(0, fault.getVersion());
         fault.setPoints(6);
 

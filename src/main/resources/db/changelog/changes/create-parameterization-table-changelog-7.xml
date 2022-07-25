@@ -10,10 +10,10 @@
             <column autoIncrement="true" name="id_parameterization" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="keyParam" type="varchar(255)">
+            <column name="key_param" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="valueParam" type="varchar(255)">
+            <column name="value_param" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -22,8 +22,8 @@
                 separator=","
                 quotchar="&quot;"
                 tableName = "parameterization" >
-            <column header="key" name="keyParam" type="string"/>
-            <column header="value" name="valueParam" type="string"/>
+            <column header="key" name="key_param" type="string"/>
+            <column header="value" name="value_param" type="string"/>
         </loadData>
         <rollback>
             <dropTable tableName="parameterization"/>
